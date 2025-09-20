@@ -7,7 +7,8 @@
       "Bash(npx tsc:*)",
       "Bash(node_modules/.bin/tsc:*)",
       "Bash(npm cache clean:*)",
-      "Bash(npm run dev:renderer:*)"
+      "Bash(npm run dev:renderer:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []
