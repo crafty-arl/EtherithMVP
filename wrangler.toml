@@ -1,14 +1,13 @@
 name = "etherith-mvp"
+compatibility_date = "2024-01-01"
 pages_build_output_dir = "."
 
-[env.production]
-compatibility_date = "2024-01-01"
+[env.production.vars]
+# Discord OAuth Configuration
+DISCORD_CLIENT_ID = "1372269269143916544"
+DISCORD_REDIRECT_URI = "https://etherith-mvp.pages.dev/dashboard.html"
 
-[[env.production.build.upload]]
-format = "modules"
-dir = "."
-
-[build]
-command = "echo 'No build step required'"
-cwd = "."
-watch_dir = "."
+[env.preview.vars]
+# Discord OAuth Configuration for preview deployments
+DISCORD_CLIENT_ID = "1372269269143916544"
+DISCORD_REDIRECT_URI = "https://etherith-mvp.pages.dev/dashboard.html"

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yjs Collaboration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #2196F3;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+        #counter {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2196F3;
+            margin: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        .status {
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🤝 Yjs Collaboration Test</h1>
+    <p><strong>Instructions:</strong> Open this page in multiple tabs to see real-time collaboration!</p>
+    
+    <div class="card">
+        <h2>Shared Counter</h2>
+        <div>Count: <span id="counter">0</span></div>
+        <button onclick="increment()">+1</button>
+        <button onclick="decrement()">-1</button>
+        <button onclick="reset()">Reset</button>
+    </div>
+    
+    <div class="card">
+        <h2>Shared Text</h2>
+        <textarea id="sharedText" placeholder="Type here and watch it sync across tabs!"></textarea>
+    </div>
+    
+    <div class="card">
+        <h2>Status</h2>
+        <div class="status" id="status">Loading Yjs...</div>
+        <div>Document State: <code id="docState">{}</code></div>
+    </div>
+
+    <!-- Load Yjs from jsdelivr CDN (more reliable) -->
+    <script src="https://cdn.jsdelivr.net/npm/yjs@13.6.10/dist/yjs.min.js"></script>
+    <script>
+        // Check if Y loaded and make it available
+        console.log('Yjs from jsdelivr:', typeof Y, Y);
+        
+        // Global variables
+        let ydoc, ymap, ytext;
+        
+        // Initialize Yjs
+        function initYjs() {
+            console.log('Initializing Yjs...');
+            
+            // Check if Yjs library loaded
+            console.log('Y object:', typeof Y, Y);
+            
+            if (typeof Y === 'undefined') {
+                console.error('Yjs library failed to load');
+                document.getElementById('status').textContent = '❌ Yjs library failed to load';
+                return;
+            }
+            
+            try {
+                console.log('Creating Yjs document...');
+                
+                // Create Yjs document and shared types
+                ydoc = new Y.Doc();
+                console.log('Yjs document created:', ydoc);
+                
+                ymap = ydoc.getMap('demo');
+                console.log('Yjs map created:', ymap);
+                
+                ytext = ydoc.getText('sharedText');
+                console.log('Yjs text created:', ytext);
+                
+                // Initialize counter if not set
+                if (!ymap.has('counter')) {
+                    ymap.set('counter', 0);
+                    console.log('Counter initialized to 0');
+                }
+                
+                // Setup event listeners
+                console.log('Setting up event listeners...');
+                setupEventListeners();
+                
+                // Setup sync (localStorage for demo)
+                console.log('Setting up sync...');
+                setupSync();
+                
+                // Update UI
+                console.log('Updating UI...');
+                updateUI();
+                
+                document.getElementById('status').textContent = '✅ Yjs collaboration active!';
+                console.log('Yjs initialized successfully');
+                
+            } catch (error) {
+                console.error('Yjs initialization failed:', error);
+                document.getElementById('status').textContent = '❌ Yjs initialization failed: ' + error.message;
+            }
+        }
+        
+        function setupEventListeners() {
+            // Listen for map changes (counter)
+            ymap.observe(() => {
+                updateUI();
+            });
+            
+            // Listen for text changes
+            ytext.observe(() => {
+                updateUI();
+            });
+            
+            // Setup text input synchronization
+            const textArea = document.getElementById('sharedText');
+            let isUpdating = false;
+            
+            textArea.addEventListener('input', () => {
+                if (isUpdating) return;
+                
+                const text = textArea.value;
+                ytext.delete(0, ytext.length);
+                if (text.length > 0) {
+                    ytext.insert(0, text);
+                }
+            });
+            
+            // Update textarea when ytext changes
+            ytext.observe(() => {
+                isUpdating = true;
+                textArea.value = ytext.toString();
+                isUpdating = false;
+            });
+        }
+        
+        function setupSync() {
+            const storageKey = 'yjs-test-demo';
+            
+            // Load existing state
+            try {
+                const saved = localStorage.getItem(storageKey);
+                if (saved) {
+                    const update = new Uint8Array(JSON.parse(saved));
+                    Y.applyUpdate(ydoc, update);
+                    console.log('Loaded saved state');
+                }
+            } catch (error) {
+                console.warn('Could not load saved state:', error);
+            }
+            
+            // Save state on updates
+            ydoc.on('update', (update) => {
+                try {
+                    const updateArray = Array.from(update);
+                    localStorage.setItem(storageKey, JSON.stringify(updateArray));
+                    
+                    // Broadcast to other tabs
+                    window.dispatchEvent(new CustomEvent('yjs-update', { 
+                        detail: { update: updateArray } 
+                    }));
+                } catch (error) {
+                    console.warn('Could not save state:', error);
+                }
+            });
+            
+            // Listen for updates from other tabs
+            window.addEventListener('yjs-update', (event) => {
+                try {
+                    const update = new Uint8Array(event.detail.update);
+                    Y.applyUpdate(ydoc, update);
+                } catch (error) {
+                    console.warn('Could not apply remote update:', error);
+                }
+            });
+            
+            // Listen for storage changes (cross-tab)
+            window.addEventListener('storage', (event) => {
+                if (event.key === storageKey && event.newValue) {
+                    try {
+                        const update = new Uint8Array(JSON.parse(event.newValue));
+                        Y.applyUpdate(ydoc, update);
+                    } catch (error) {
+                        console.warn('Could not apply storage update:', error);
+                    }
+                }
+            });
+        }
+        
+        function updateUI() {
+            // Update counter
+            const counter = ymap.get('counter') || 0;
+            document.getElementById('counter').textContent = counter;
+            
+            // Update document state
+            const state = {
+                counter: counter,
+                textLength: ytext.length,
+                text: ytext.toString().substring(0, 30) + (ytext.length > 30 ? '...' : '')
+            };
+            document.getElementById('docState').textContent = JSON.stringify(state, null, 2);
+        }
+        
+        // Button functions
+        function increment() {
+            if (!ymap) {
+                alert('Yjs not initialized yet! Check console for errors.');
+                return;
+            }
+            const current = ymap.get('counter') || 0;
+            ymap.set('counter', current + 1);
+        }
+        
+        function decrement() {
+            if (!ymap) {
+                alert('Yjs not initialized yet! Check console for errors.');
+                return;
+            }
+            const current = ymap.get('counter') || 0;
+            ymap.set('counter', Math.max(0, current - 1));
+        }
+        
+        function reset() {
+            if (!ymap || !ytext) {
+                alert('Yjs not initialized yet! Check console for errors.');
+                return;
+            }
+            ymap.set('counter', 0);
+            ytext.delete(0, ytext.length);
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initYjs);
+    </script>
+</body>
+</html>

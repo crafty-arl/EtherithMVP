@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Collaboration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #2196F3;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+        #counter {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2196F3;
+            margin: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        .status {
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛠️ Simple Collaboration Test (No External Dependencies)</h1>
+    <p><strong>This demonstrates basic cross-tab synchronization using only localStorage and browser events.</strong></p>
+    
+    <div class="warning">
+        <strong>Note:</strong> This is a simplified version that demonstrates the core concept of real-time collaboration without Yjs. 
+        It uses localStorage and browser events to sync between tabs - perfect for understanding the basic principles!
+    </div>
+    
+    <div class="card">
+        <h2>Shared Counter</h2>
+        <div>Count: <span id="counter">0</span></div>
+        <button onclick="increment()">+1</button>
+        <button onclick="decrement()">-1</button>
+        <button onclick="reset()">Reset</button>
+    </div>
+    
+    <div class="card">
+        <h2>Shared Text</h2>
+        <textarea id="sharedText" placeholder="Type here and watch it sync across tabs!"></textarea>
+    </div>
+    
+    <div class="card">
+        <h2>Status</h2>
+        <div class="status" id="status">✅ Simple collaboration active!</div>
+        <div>Document State: <code id="docState">{}</code></div>
+    </div>
+
+    <script>
+        // Simple collaboration using localStorage and events
+        let isUpdating = false;
+        
+        // Initialize
+        function init() {
+            console.log('Initializing simple collaboration...');
+            
+            // Load existing state
+            loadState();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Update UI
+            updateUI();
+            
+            console.log('Simple collaboration initialized');
+        }
+        
+        function loadState() {
+            try {
+                const counter = localStorage.getItem('simple-collab-counter') || '0';
+                const text = localStorage.getItem('simple-collab-text') || '';
+                
+                document.getElementById('counter').textContent = counter;
+                document.getElementById('sharedText').value = text;
+                
+                updateDocState();
+            } catch (error) {
+                console.warn('Could not load state:', error);
+            }
+        }
+        
+        function saveState() {
+            if (isUpdating) return;
+            
+            try {
+                const counter = document.getElementById('counter').textContent;
+                const text = document.getElementById('sharedText').value;
+                
+                localStorage.setItem('simple-collab-counter', counter);
+                localStorage.setItem('simple-collab-text', text);
+                
+                // Broadcast to other tabs
+                window.dispatchEvent(new CustomEvent('simple-collab-update', {
+                    detail: { counter, text }
+                }));
+                
+                updateDocState();
+            } catch (error) {
+                console.warn('Could not save state:', error);
+            }
+        }
+        
+        function setupEventListeners() {
+            // Text area changes
+            const textArea = document.getElementById('sharedText');
+            textArea.addEventListener('input', saveState);
+            
+            // Listen for updates from other tabs
+            window.addEventListener('simple-collab-update', (event) => {
+                if (isUpdating) return;
+                
+                isUpdating = true;
+                
+                document.getElementById('counter').textContent = event.detail.counter;
+                document.getElementById('sharedText').value = event.detail.text;
+                
+                updateDocState();
+                
+                setTimeout(() => {
+                    isUpdating = false;
+                }, 50);
+            });
+            
+            // Listen for storage changes (cross-tab)
+            window.addEventListener('storage', (event) => {
+                if (event.key === 'simple-collab-counter' || event.key === 'simple-collab-text') {
+                    loadState();
+                }
+            });
+        }
+        
+        function updateUI() {
+            updateDocState();
+        }
+        
+        function updateDocState() {
+            const counter = document.getElementById('counter').textContent;
+            const text = document.getElementById('sharedText').value;
+            
+            const state = {
+                counter: parseInt(counter),
+                textLength: text.length,
+                text: text.substring(0, 30) + (text.length > 30 ? '...' : ''),
+                timestamp: new Date().toISOString()
+            };
+            
+            document.getElementById('docState').textContent = JSON.stringify(state, null, 2);
+        }
+        
+        // Button functions
+        function increment() {
+            const current = parseInt(document.getElementById('counter').textContent) || 0;
+            document.getElementById('counter').textContent = current + 1;
+            saveState();
+        }
+        
+        function decrement() {
+            const current = parseInt(document.getElementById('counter').textContent) || 0;
+            document.getElementById('counter').textContent = Math.max(0, current - 1);
+            saveState();
+        }
+        
+        function reset() {
+            document.getElementById('counter').textContent = '0';
+            document.getElementById('sharedText').value = '';
+            saveState();
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // Show instructions
+        setTimeout(() => {
+            console.log('🎯 INSTRUCTIONS:');
+            console.log('1. Open this page in multiple tabs');
+            console.log('2. Click the counter buttons in one tab');
+            console.log('3. Type in the text area in another tab');
+            console.log('4. Watch everything sync automatically!');
+        }, 1000);
+    </script>
+</body>
+</html>

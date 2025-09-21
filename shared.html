@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared Memories - Etherith</title>
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="theme-color" content="#5865F2">
+</head>
+<body class="shared-page">
+    <div class="container">
+        <header class="app-header">
+            <div class="logo">
+                <h1>🧠 Etherith</h1>
+            </div>
+            <div class="user-profile" id="userProfile">
+                <img id="userAvatar" class="avatar" src="" alt="User Avatar">
+                <span id="userName">Loading...</span>
+            </div>
+        </header>
+
+        <nav class="main-nav">
+            <a href="/dashboard.html" class="nav-link">
+                <span class="icon">🏠</span>
+                Dashboard
+            </a>
+            <a href="/upload.html" class="nav-link">
+                <span class="icon">📤</span>
+                Upload Memory
+            </a>
+            <a href="/memories.html" class="nav-link">
+                <span class="icon">🗂️</span>
+                My Memories
+            </a>
+            <a href="/shared.html" class="nav-link active">
+                <span class="icon">🔗</span>
+                Shared
+            </a>
+            <a href="/peers.html" class="nav-link">
+                <span class="icon">🌐</span>
+                Peers
+            </a>
+        </nav>
+
+        <main class="shared-content">
+            <div class="page-header">
+                <h2>🔗 Shared Memories</h2>
+                <p>Import and explore memories shared via Content IDs (CIDs)</p>
+            </div>
+
+            <div class="import-section">
+                <h3>📥 Import Memory by CID</h3>
+                <div class="import-form">
+                    <div class="cid-input-group">
+                        <input type="text" id="cidInput" placeholder="Paste Content ID here (e.g., Qm...)" class="cid-input">
+                        <button id="importBtn" class="btn-primary">
+                            <span class="btn-icon">📥</span>
+                            Import
+                        </button>
+                    </div>
+                    <p class="import-hint">
+                        Enter a Content ID (CID) to load a memory shared by another user
+                    </p>
+                </div>
+
+                <div id="importProgress" class="import-progress hidden">
+                    <div class="progress-indicator">
+                        <div class="spinner"></div>
+                        <span id="importStatus">Fetching memory...</span>
+                    </div>
+                </div>
+
+                <div id="importPreview" class="import-preview hidden">
+                    <h4>Memory Preview</h4>
+                    <div class="preview-card">
+                        <div class="preview-header">
+                            <h5 id="previewTitle">Loading...</h5>
+                            <span id="previewDate" class="preview-date">Date unknown</span>
+                        </div>
+                        <div class="preview-content">
+                            <p id="previewDescription">Loading description...</p>
+                            <div id="previewTags" class="tag-list"></div>
+                            <div class="preview-files">
+                                <strong>Files:</strong>
+                                <span id="previewFileCount">0 files</span>
+                            </div>
+                        </div>
+                        <div class="preview-actions">
+                            <button id="confirmImport" class="btn-primary">Save to My Memories</button>
+                            <button id="cancelImport" class="btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shared-memories-section">
+                <div class="section-header">
+                    <h3>📚 Recently Imported</h3>
+                    <div class="view-controls">
+                        <select id="sharedSortBy" class="filter-select">
+                            <option value="import-date-desc">Recently Imported</option>
+                            <option value="memory-date-desc">Memory Date (New)</option>
+                            <option value="memory-date-asc">Memory Date (Old)</option>
+                            <option value="title-asc">Title A-Z</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="sharedMemoriesGrid" class="memories-grid">
+                    <div class="empty-state" id="sharedEmptyState">
+                        <div class="empty-icon">🔗</div>
+                        <h3>No shared memories</h3>
+                        <p>Import memories by entering their Content IDs above</p>
+                        <div class="example-cids">
+                            <h4>Try these example CIDs:</h4>
+                            <button class="example-cid" data-cid="QmExample1">QmExample1...</button>
+                            <button class="example-cid" data-cid="QmExample2">QmExample2...</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3>❓ How it works</h3>
+                <div class="help-grid">
+                    <div class="help-card">
+                        <div class="help-icon">🔗</div>
+                        <h4>Content IDs (CIDs)</h4>
+                        <p>Every memory has a unique Content ID that identifies it across the IPFS network</p>
+                    </div>
+                    <div class="help-card">
+                        <div class="help-icon">🌐</div>
+                        <h4>Peer-to-Peer</h4>
+                        <p>Memories are fetched directly from other users or IPFS gateways</p>
+                    </div>
+                    <div class="help-card">
+                        <div class="help-icon">🔒</div>
+                        <h4>Privacy</h4>
+                        <p>Only memories marked as "shareable" generate CIDs for public access</p>
+                    </div>
+                    <div class="help-card">
+                        <div class="help-icon">💾</div>
+                        <h4>Local Storage</h4>
+                        <p>Imported memories are saved locally for offline access</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sharedMemoryModal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="sharedModalTitle">Shared Memory</h3>
+                        <button id="closeSharedModal" class="close-btn">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="memory-details">
+                            <div class="detail-section">
+                                <h4>📝 Information</h4>
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <strong>Title:</strong>
+                                        <span id="sharedModalMemoryTitle"></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Original Date:</strong>
+                                        <span id="sharedModalMemoryDate"></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Imported:</strong>
+                                        <span id="sharedModalImportDate"></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Source:</strong>
+                                        <span id="sharedModalSource">Peer-to-peer</span>
+                                    </div>
+                                </div>
+                                <div class="detail-item full-width">
+                                    <strong>Description:</strong>
+                                    <p id="sharedModalMemoryDescription">No description</p>
+                                </div>
+                                <div class="detail-item full-width" id="sharedModalTagsContainer">
+                                    <strong>Tags:</strong>
+                                    <div id="sharedModalMemoryTags" class="tag-list"></div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section" id="sharedModalFilesSection">
+                                <h4>📁 Files</h4>
+                                <div id="sharedModalFileList" class="modal-file-list"></div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h4>🔗 Content ID</h4>
+                                <div class="cid-container">
+                                    <code id="sharedModalCid" class="cid-display"></code>
+                                    <button id="sharedModalCopyCid" class="copy-btn" title="Copy CID">📋</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="deleteSharedMemoryBtn" class="btn-danger">Remove</button>
+                        <button id="reShareMemoryBtn" class="btn-secondary">Re-share</button>
+                        <button id="downloadSharedMemoryBtn" class="btn-primary">Download</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>Shared memories are fetched from the IPFS network</p>
+        </footer>
+    </div>
+
+    <script type="module" src="/src/js/main.js"></script>
+    <script type="module" src="/src/js/shared.js"></script>
+</body>
+</html>
