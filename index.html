@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2196F3">
+    <title>Hello World PWA</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- iOS Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Hello World PWA">
+    <!-- <link rel="apple-touch-icon" href="icons/icon-192x192.png"> -->
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 Hello World PWA</h1>
+            <p class="subtitle">Your first Progressive Web App</p>
+        </header>
+        
+        <main>
+            <div class="card">
+                <h2>Welcome!</h2>
+                <p>This is a simple Hello World Progressive Web App that demonstrates:</p>
+                <ul>
+                    <li>✅ Responsive design</li>
+                    <li>✅ Offline functionality</li>
+                    <li>✅ Installable on devices</li>
+                    <li>✅ App-like experience</li>
+                </ul>
+                
+                <div class="actions">
+                    <button id="installBtn" class="btn btn-primary">Install App</button>
+                    <button id="refreshBtn" class="btn btn-secondary">Refresh Content</button>
+                </div>
+                
+                <div class="status">
+                    <p id="networkStatus">🌐 Online</p>
+                    <p id="swStatus">Service Worker: <span id="swState">Checking...</span></p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Current Time</h3>
+                <p id="currentTime" class="time-display">Loading...</p>
+            </div>
+            
+            <!-- Yjs Collaborative Demo -->
+            <div class="card">
+                <h3>🤝 Collaborative Demo with Yjs</h3>
+                <p>Experience real-time collaboration! Open this page in multiple tabs to see changes sync automatically.</p>
+                
+                <div class="yjs-demo">
+                    <div class="demo-section">
+                        <h4>Shared Counter</h4>
+                        <p>Current count: <span id="sharedCounter">0</span></p>
+                        <div class="counter-controls">
+                            <button id="incrementBtn" class="btn btn-secondary">+1</button>
+                            <button id="decrementBtn" class="btn btn-secondary">-1</button>
+                            <button id="resetBtn" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+                    
+                    <div class="demo-section">
+                        <h4>Shared Text</h4>
+                        <textarea id="sharedText" placeholder="Type here... changes sync across all open tabs!" rows="4"></textarea>
+                        <p class="demo-info">📝 Try typing in multiple tabs simultaneously!</p>
+                    </div>
+                    
+                    <div class="demo-section">
+                        <h4>Collaboration Status</h4>
+                        <p id="collaborationStatus">Initializing Yjs...</p>
+                        <p class="demo-info">Document state: <code id="docState">{}</code></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 Hello World PWA</p>
+        </footer>
+    </div>
+
+    <!-- Vite will handle bundling and module loading -->
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
