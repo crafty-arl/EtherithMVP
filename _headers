@@ -15,16 +15,22 @@
   # Cache Control
   Cache-Control: public, max-age=3600
 
-# Static assets caching
+# JavaScript files
 *.js
+  Content-Type: application/javascript
   Cache-Control: public, max-age=31536000, immutable
 
+# CSS files
 *.css
+  Content-Type: text/css
   Cache-Control: public, max-age=31536000, immutable
 
+# HTML files
 *.html
+  Content-Type: text/html
   Cache-Control: public, max-age=300
 
 # Service Worker
 /sw.js
+  Content-Type: application/javascript
   Cache-Control: public, max-age=0, must-revalidate
