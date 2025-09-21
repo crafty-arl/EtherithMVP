@@ -6,7 +6,7 @@
 // Detect environment
 const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
 const isPreview = window.location.hostname.includes('pages.dev') && !window.location.hostname.includes('etherith-mvp.pages.dev');
-const isProduction = window.location.hostname === 'etherith-mvp.pages.dev' || window.location.hostname === 'etherith.app';
+const isProduction = window.location.hostname === 'etherith-production.pages.dev' || window.location.hostname === 'etherith.app';
 
 // Discord Configuration
 export const DISCORD_CONFIG = {
