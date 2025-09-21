@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build && npm run post-build && wrangler pages deploy dist --project-name=etherith-production",
     "build-only": "vite build && npm run post-build",
-    "post-build": "cp dist/index-react.html dist/index.html",
+    "post-build": "copy dist\\index-react.html dist\\index.html",
     "preview": "vite preview",
     "deploy": "npm run build-only && wrangler pages deploy dist --project-name=etherith-production",
     "deploy-preview": "npm run build-only && wrangler pages deploy dist --project-name=etherith-production --compatibility-date=2025-09-21"

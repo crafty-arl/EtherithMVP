@@ -42,7 +42,10 @@
       "Bash(wrangler pages deploy:*)",
       "WebFetch(domain:a2cf5a65.etherith-production.pages.dev)",
       "WebFetch(domain:42f4893b.etherith-production.pages.dev)",
-      "WebFetch(domain:etherith-production.pages.dev)"
+      "WebFetch(domain:etherith-production.pages.dev)",
+      "Bash(git push:*)",
+      "Bash(tasklist)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

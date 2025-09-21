@@ -3,7 +3,10 @@ compatibility_date = "2024-01-01"
 pages_build_output_dir = "dist"
 
 [vars]
-# Discord OAuth Configuration
+# Crossmint Configuration
+CROSSMINT_API_KEY = "ck_staging_9oAt5toHoUFRBGH3yRjUyWXretfBYF7W3b7pacHt6BbRAEWao3Ge7em7v35LJrW8aiLkougdivHry14a5M3Vb75iBNRzhVveZRbNNwyRCVnfd1ddZP6XyGxCHzMSkcWVihzLBdFoG9dyRK2K4moaVXuLi9AJovufEBu4qkzEK3K7N7fnbhFLosyuBF1MW95tsA8TGh72ZZVkX68pQieLV1Tf"
+
+# Discord OAuth Configuration (Legacy - can be removed)
 DISCORD_CLIENT_ID = "1372269269143916544"
 DISCORD_REDIRECT_URI = "https://etherith-production.pages.dev/functions/discord-oauth/callback"
 

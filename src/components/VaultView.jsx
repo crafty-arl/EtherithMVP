@@ -2,8 +2,11 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Upload, Calendar, FileText, Link as LinkIcon } from 'lucide-react'
 import MemoryCard from './MemoryCard'
+import { useResponsiveContext } from '../context/ResponsiveContext'
 
 export default function VaultView({ memories, onRefresh, isArchiveMode }) {
+  const { shouldAnimate, isMobile, prefersReducedMotion } = useResponsiveContext()
+
   const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes'
     const k = 1024
@@ -23,8 +26,12 @@ export default function VaultView({ memories, onRefresh, isArchiveMode }) {
         <div className="text-center opacity-70 max-w-md">
           <motion.div
             className="text-6xl mb-8 opacity-50"
-            animate={{ y: [-5, 5, -5] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            animate={shouldAnimate ? { y: [-5, 5, -5] } : {}}
+            transition={shouldAnimate ? {
+              duration: isMobile ? 6 : 4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            } : {}}
           >
             ⬆
           </motion.div>
@@ -40,9 +47,9 @@ export default function VaultView({ memories, onRefresh, isArchiveMode }) {
           <motion.button
             onClick={() => window.dispatchEvent(new CustomEvent('switch-view', { detail: 'upload' }))}
             className={`
-              mt-10 px-6 py-3 border border-current rounded-xl cursor-pointer font-semibold
+              mt-10 px-6 py-3 min-h-touch min-w-touch border border-current rounded-xl cursor-pointer font-semibold
               text-sm tracking-wider uppercase bg-transparent motion-luxury btn-hover
-              hover:bg-current hover:text-vault-bg
+              hover:bg-current hover:text-vault-bg active:scale-95
               ${isArchiveMode ? 'hover:text-archive-bg' : ''}
             `}
             whileHover={{ y: -2 }}
@@ -58,15 +65,17 @@ export default function VaultView({ memories, onRefresh, isArchiveMode }) {
   return (
     <motion.div
       className="space-y-xl"
-      initial={{ opacity: 0 }}
+      initial={shouldAnimate ? { opacity: 0 } : { opacity: 1 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
+      transition={shouldAnimate ? {
+        duration: isMobile ? 0.4 : 0.6
+      } : {}}
     >
       {/* Grid Container */}
       <div className={`
-        grid grid-cols-[repeat(auto-fill,280px)] gap-card justify-start mt-xl
-        tablet:grid-cols-[repeat(auto-fill,260px)] tablet:gap-card-tablet
-        mobile:grid-cols-1 mobile:gap-card-mobile mobile:justify-center
+        grid grid-cols-1 gap-card justify-center mt-xl
+        sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] sm:gap-card-sm sm:justify-start
+        lg:grid-cols-[repeat(auto-fill,280px)] lg:gap-card-md
       `}>
         {memories.map((memory, index) => (
           <MemoryCard

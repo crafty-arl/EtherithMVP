@@ -1,8 +1,11 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Calendar, FileText, Link as LinkIcon, AlertCircle, CheckCircle, Clock } from 'lucide-react'
+import { useResponsiveContext } from '../context/ResponsiveContext'
 
 export default function MemoryCard({ memory, index, isArchiveMode, formatFileSize }) {
+  const { shouldAnimate, isMobile, isTouch, hasHover } = useResponsiveContext()
+
   const getStatusIcon = (status) => {
     switch (status) {
       case 'uploading':
@@ -38,22 +41,24 @@ export default function MemoryCard({ memory, index, isArchiveMode, formatFileSiz
   return (
     <motion.div
       className={`
-        w-card bg-vault-card rounded-lg p-xl border border-current motion-luxury
+        w-full max-w-full p-lg bg-vault-card rounded-lg border border-current motion-luxury
         relative overflow-hidden cursor-pointer hover-lift-strong
-        tablet:w-card-tablet mobile:w-card-mobile mobile:max-w-full mobile:p-lg
+        sm:w-card-sm sm:p-xl
+        lg:w-card-md
         ${isArchiveMode ? 'bg-archive-card text-archive-text' : ''}
         before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5
         before:bg-current before:scale-x-0 before:origin-left before:transition-transform
         before:duration-medium before:ease-luxury hover:before:scale-x-100
       `}
-      initial={{ opacity: 0, y: 20 }}
+      initial={shouldAnimate ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.6,
-        delay: index * 0.1,
+      transition={shouldAnimate ? {
+        duration: isMobile ? 0.4 : 0.6,
+        delay: Math.min(index * (isMobile ? 0.05 : 0.1), 0.5),
         ease: [0.33, 1, 0.68, 1]
-      }}
-      whileHover={{ y: -12, scale: 1.02 }}
+      } : {}}
+      whileHover={hasHover && shouldAnimate ? { y: -12, scale: 1.02 } : {}}
+      whileTap={isTouch ? { scale: 0.98 } : {}}
     >
       {/* Header */}
       <div className="flex justify-between items-start mb-md">
@@ -124,8 +129,9 @@ export default function MemoryCard({ memory, index, isArchiveMode, formatFileSiz
             rel="noopener noreferrer"
             className={`
               inline-flex items-center gap-1 text-current no-underline font-mono text-[11px]
-              font-semibold tracking-wider py-1.5 px-3 border border-current rounded
+              font-semibold tracking-wider py-1.5 px-3 min-h-touch min-w-touch border border-current rounded
               motion-smooth hover:bg-current hover:text-vault-card hover:-translate-y-px
+              active:scale-95 justify-center
               ${isArchiveMode ? 'hover:text-archive-card' : ''}
             `}
             title="View on IPFS"

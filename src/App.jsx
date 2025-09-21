@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useAuth, useWallet } from '@crossmint/client-sdk-react-ui'
 import { useEtherith } from './hooks/useEtherith'
-import Sidebar from './components/Sidebar'
-import Header from './components/Header'
+import { ResponsiveProvider, useResponsiveContext } from './context/ResponsiveContext'
+import AdaptiveNavigation from './components/AdaptiveNavigation'
 import VaultView from './components/VaultView'
 import UploadView from './components/UploadView'
 import ArchiveView from './components/ArchiveView'
 import ProfileView from './components/ProfileView'
 import SettingsView from './components/SettingsView'
 import DebugPanel from './components/DebugPanel'
+import { commonPatterns } from './utils/mobileFirst'
 
 const views = {
   vault: { title: 'Vault', subtitle: 'Preserve what matters', component: VaultView },
@@ -18,9 +20,18 @@ const views = {
   settings: { title: 'Protocol', subtitle: 'Configure preservation', component: SettingsView }
 }
 
-function App() {
+/**
+ * AppContent - Main application content (inside ResponsiveProvider)
+ */
+function AppContent() {
   const [currentView, setCurrentView] = useState('vault')
   const [isArchiveMode, setIsArchiveMode] = useState(false)
+  const { showSidebar, showBottomNav, shouldAnimate } = useResponsiveContext()
+
+  // Crossmint authentication state
+  const { jwt } = useAuth()
+  const { wallet } = useWallet()
+  const isAuthenticated = !!(jwt && wallet)
 
   const {
     isInitialized,
@@ -30,14 +41,11 @@ function App() {
     connectionStatus,
     syncStatus,
     debugInfo,
-    isAuthenticated,
-    loginWithDiscord,
-    logout,
     uploadMemory,
     loadMemories,
     loadPublicArchive,
     searchArchive
-  } = useEtherith()
+  } = useEtherith(wallet)
 
   // Handle view switching
   const switchView = (viewName) => {
@@ -79,51 +87,71 @@ function App() {
 
   if (!isInitialized) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-2 border-black border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <h2 className="text-xl font-display font-bold text-black">Initializing Etherith...</h2>
-          <p className="text-sm text-black/70 mt-2">Loading memory vault systems</p>
+      <div className="min-h-screen-mobile lg:min-h-screen bg-white flex items-center justify-center p-content">
+        <div className="text-center max-w-sm">
+          <motion.div
+            className="w-16 h-16 border-2 border-black border-t-transparent rounded-full mx-auto mb-6"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          />
+          <h2 className="text-xl sm:text-2xl font-display font-bold text-black mb-2">
+            Initializing Etherith...
+          </h2>
+          <p className="text-sm sm:text-base text-black/70">
+            Loading memory vault systems
+          </p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className={`min-h-screen transition-all duration-slow ease-luxury ${
-      isArchiveMode ? 'archive-mode' : 'bg-vault-bg text-vault-text'
-    }`}>
-      <div className="grid grid-cols-[220px_1fr] h-screen w-screen overflow-hidden fixed top-0 left-0 mobile:grid-cols-1 mobile:grid-rows-[60px_1fr]">
+    <div className={`
+      min-h-screen-mobile lg:min-h-screen transition-all duration-slow ease-luxury
+      ${isArchiveMode ? 'archive-mode' : 'bg-vault-bg text-vault-text'}
+    `}>
+      {/* Adaptive Navigation System */}
+      <AdaptiveNavigation
+        currentView={currentView}
+        onViewChange={switchView}
+        isArchiveMode={isArchiveMode}
+        connectionStatus={connectionStatus}
+        onSearchPress={() => console.log('Search pressed')}
+        onNotificationPress={() => console.log('Notifications pressed')}
+      />
 
-        {/* Sidebar Navigation */}
-        <Sidebar
-          currentView={currentView}
-          onViewChange={switchView}
-          user={user}
-          isAuthenticated={isAuthenticated}
-          onLogin={loginWithDiscord}
-          onLogout={logout}
-          isArchiveMode={isArchiveMode}
-        />
+      {/* Main Content Layout - Mobile First */}
+      <div className={`
+        ${commonPatterns.responsiveContainer}
+        ${showBottomNav ? 'pb-nav-bar' : ''}
+        ${showBottomNav ? 'pt-top-bar' : ''}
+        ${showSidebar ? 'lg:grid lg:grid-cols-[var(--sidebar-width)_1fr] lg:pt-0' : ''}
+        transition-all duration-300 ease-out
+      `}>
 
         {/* Main Content Area */}
-        <main className="flex flex-col overflow-hidden bg-vault-bg transition-all duration-slow ease-luxury">
-          <Header
-            title={currentViewData.title}
-            subtitle={currentViewData.subtitle}
-            connectionStatus={connectionStatus}
-            syncStatus={syncStatus}
-          />
+        <main className={`
+          flex flex-col min-h-screen-safe
+          ${showSidebar ? 'lg:overflow-hidden' : ''}
+          bg-vault-bg transition-all duration-slow ease-luxury
+        `}>
 
-          <div className="flex-1 p-content overflow-y-auto scrollbar-thin relative h-[calc(100vh-80px)] mobile:h-[calc(100vh-60px-70px)] mobile:p-content-mobile tablet:p-content-tablet">
+          {/* Content Container */}
+          <div className={`
+            flex-1 p-content sm:p-content-sm md:p-content-md lg:p-content-lg
+            ${showSidebar ? 'lg:overflow-y-auto lg:h-screen' : ''}
+            scrollbar-thin relative
+          `}>
+
+            {/* Page Content with Animations */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentView}
-                initial="initial"
+                initial={shouldAnimate ? "initial" : "in"}
                 animate="in"
-                exit="out"
+                exit={shouldAnimate ? "out" : "in"}
                 variants={pageVariants}
-                transition={pageTransition}
+                transition={shouldAnimate ? pageTransition : { duration: 0 }}
                 className="h-full"
               >
                 <ViewComponent
@@ -144,6 +172,17 @@ function App() {
         </main>
       </div>
     </div>
+  )
+}
+
+/**
+ * App - Main application component with ResponsiveProvider
+ */
+function App() {
+  return (
+    <ResponsiveProvider>
+      <AppContent />
+    </ResponsiveProvider>
   )
 }
 

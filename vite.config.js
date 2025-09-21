@@ -8,7 +8,13 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}', 'index.html'],
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB limit
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/_/, /\/[^/?]+\.[^/]+$/],
+        additionalManifestEntries: [
+          { url: '/index.html', revision: null }
+        ],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/esm\.sh\/yjs/,
@@ -26,6 +32,17 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'helia-esm-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+              }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/esm\.sh\/@crossmint/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'crossmint-esm-cache',
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
