@@ -1,15 +1,6 @@
----
-title: y-dat
-source: https://docs.yjs.dev/ecosystem/connection-provider/y-hyper
-scraped_at: 2025-09-20 19:51:36
----
-
 # y-dat
 
 [Edit](https://github.com/yjs/docs/blob/main/ecosystem/connection-provider/y-hyper.md)
-
-1. [🔥Ecosystem](/ecosystem)
-2. [Connection Provider](/ecosystem/connection-provider)
 
 # y-dat
 
@@ -22,3 +13,5 @@ I'm still in the process of moving the documentation to this place. For now, you
 Last updated 5 years ago
 
 Was this helpful?
+
+Source: https://docs.yjs.dev/ecosystem/connection-provider/y-hyper

@@ -5,4 +5,11 @@ pages_build_output_dir = "dist"
 [vars]
 # Discord OAuth Configuration
 DISCORD_CLIENT_ID = "1372269269143916544"
-DISCORD_REDIRECT_URI = "https://etherith-production.pages.dev/dashboard.html"
+DISCORD_REDIRECT_URI = "https://etherith-production.pages.dev/functions/discord-oauth/callback"
+
+# Note: These secrets need to be set via Cloudflare Dashboard or wrangler secret:
+# DISCORD_CLIENT_SECRET = "IrIlauEI_kcPcVjJy3jLcf34fuGDBHhT"
+# PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJlNDBjNzA1ZC0xNzNiLTRhZWYtOWFkMC00NzQyNzc0ZWEwNTQiLCJlbWFpbCI6ImNhcmxAY3JhZnR0aGVmdXR1cmUueHl6IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjI4M2RhMTE5NWMxOTEwMjgzZWZiIiwic2NvcGVkS2V5U2VjcmV0IjoiMzU5M2NiMjA1MDY5MjlkOWE4MTQzYTllNGYzZjY4NjFkODU5ZWJlYmJmZTAwODQ5ZjdhNGRiYWMyZDc0MzlmNiIsImV4cCI6MTc4OTk2NTAyMH0.RyDhmcxvcB4gmdoqeOhzUHGk4c3FPOnRfS3PfmPfCD4"
+
+[ai]
+binding = "AI"

@@ -1,9 +1,3 @@
----
-title: Introduction
-source: https://docs.yjs.dev/
-scraped_at: 2025-09-20 19:50:40
----
-
 # Introduction
 
 [Edit](https://github.com/yjs/docs/blob/main/README.md)
@@ -12,49 +6,35 @@ scraped_at: 2025-09-20 19:50:40
 
 Modular building blocks for building collaborative applications like Google Docs and Figma.
 
-This documentation website is a work in progress. The best source of information is still the [Yjs README](https://github.com/yjs/yjs) and the [yjs-demos](https://github.com/yjs/yjs-demos) repository.
-
 Yjs is a high-performance [CRDT](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) for building collaborative applications that sync automatically.
 
-It exposes its internal CRDT model as *shared data types* that can be manipulated concurrently. Shared types are similar to common data types like `Map` and `Array`. They can be manipulated, fire events when changes happen, and automatically merge without merge conflicts.
+It exposes its internal CRDT model as _shared data types_ that can be manipulated concurrently. Shared types are similar to common data types like `Map` and `Array`. They can be manipulated, fire events when changes happen, and automatically merge without merge conflicts.
 
-## Quick Start
+## 
+
+[](#quick-start)
+
+Quick Start
 
 This is a working example of how shared types automatically sync. We also have a [getting-started guide](/getting-started/a-collaborative-editor), API documentation, and lots of [live demos with source code](https://github.com/yjs/yjs-demos).
 
 Copy
 
-```javascript
-import * as Y from 'yjs'
+## 
 
-// Yjs documents are collections of
-// shared objects that sync automatically.
-const ydoc = new Y.Doc()
-// Define a shared Y.Map instance
-const ymap = ydoc.getMap()
-ymap.set('keyA', 'valueA')
+[](#editor-support)
 
-// Create another Yjs document (simulating a remote user)
-// and create some conflicting changes
-const ydocRemote = new Y.Doc()
-const ymapRemote = ydocRemote.getMap()
-ymapRemote.set('keyB', 'valueB')
-
-// Merge changes from remote
-const update = Y.encodeStateAsUpdate(ydocRemote)
-Y.applyUpdate(ydoc, update)
-
-// Observe that the changes have merged
-console.log(ymap.toJSON()) // => { keyA: 'valueA', keyB: 'valueB' }
-```
-
-## Editor Support
+Editor Support
 
 Yjs supports several popular text and rich-text editors. We are working with different projects to enable collaboration-support through Yjs.
 
 [ProseMirror](/ecosystem/editor-bindings/prosemirror)[TipTap](/ecosystem/editor-bindings/tiptap2)[Monaco](/ecosystem/editor-bindings/monaco)[Quill](/ecosystem/editor-bindings/quill)[CodeMirror](/ecosystem/editor-bindings/codemirror)[Remirror](/ecosystem/editor-bindings/remirror)
 
-## Network Agnostic 📡
+## 
+
+[](#network-agnostic)
+
+Network Agnostic 📡
 
 Yjs doesn't make any assumptions about the network technology you are using. As long as all changes eventually arrive, the documents will sync. The order in which document updates are applied doesn't matter.
 
@@ -68,13 +48,21 @@ Yjs is truly network agnostic and can be used as a data model for decentralized 
 
 Just start somewhere. Since the "network provider" is clearly separated from Yjs and the various integrations, it is pretty easy to switch to different providers.
 
-## Rich Ecosystem 🔥
+## 
+
+[](#rich-ecosystem)
+
+Rich Ecosystem 🔥
 
 Yjs is a modular approach that allows the community to make any editor collaborative using any network technology. It has thought-through solutions for almost all shared-editing related problems.
 
 We built a rich ecosystem of extensions around Yjs. There are ready-to-use editor integrations for many popular (rich-)text editors, adapters to different network technologies (like WebRTC, WebSocket, or Hyper), and persistence providers that store document updates in a database.
 
-## Unmatched Performance🚀
+## 
+
+[](#unmatched-performance)
+
+Unmatched Performance🚀
 
 Yjs is the fastest CRDT implementation by far.
 
@@ -85,3 +73,5 @@ Yjs is the fastest CRDT implementation by far.
 Last updated 10 months ago
 
 Was this helpful?
+
+Source: https://docs.yjs.dev/

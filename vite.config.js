@@ -1,32 +1,33 @@
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
+    react(),
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/discord\.com\/api\//,
-            handler: 'NetworkFirst',
+            urlPattern: /^https:\/\/esm\.sh\/yjs/,
+            handler: 'CacheFirst',
             options: {
-              cacheName: 'discord-api-cache',
-              networkTimeoutSeconds: 3,
+              cacheName: 'yjs-esm-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 // 1 hour
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
               }
             }
           },
           {
-            urlPattern: /^https:\/\/cdn\.discordapp\.com\//,
+            urlPattern: /^https:\/\/esm\.sh\/@helia/,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'discord-cdn-cache',
+              cacheName: 'helia-esm-cache',
               expiration: {
-                maxEntries: 50,
+                maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
               }
             }
@@ -34,11 +35,11 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'Etherith - Memory Archive',
+        name: 'Etherith Memory Vault',
         short_name: 'Etherith',
-        description: 'Decentralized memory archiving with peer-to-peer sharing',
-        theme_color: '#5865F2',
-        background_color: '#2C2F33',
+        description: 'Decentralized Memory Vault with Discord OAuth, IPFS Storage, and AI Moderation',
+        theme_color: '#000000',
+        background_color: '#ffffff',
         display: 'standalone',
         scope: '/',
         start_url: '/',
@@ -47,17 +48,6 @@ export default defineConfig({
             src: '/favicon.ico',
             sizes: '64x64 32x32 24x24 16x16',
             type: 'image/x-icon'
-          },
-          {
-            src: '/icon-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any maskable'
-          },
-          {
-            src: '/icon-512.png',
-            sizes: '512x512',
-            type: 'image/png'
           }
         ]
       },
@@ -69,33 +59,20 @@ export default defineConfig({
 
   // Build configuration
   build: {
-    target: 'es2020',
+    target: 'es2022',
     outDir: 'dist',
-    copyPublicDir: true,
     emptyOutDir: true,
     sourcemap: true,
     rollupOptions: {
       input: {
-        main: 'index.html',
-        dashboard: 'dashboard.html',
-        upload: 'upload.html',
-        memories: 'memories.html',
-        shared: 'shared.html',
-        peers: 'peers.html'
-      },
-      output: {
-        manualChunks: {
-          auth: ['./src/js/auth.js'],
-          helia: ['./src/js/helia.js'],
-          utils: ['./src/js/utils.js']
-        }
+        main: 'index-react.html'
       }
     }
   },
 
   // Development server configuration
   server: {
-    port: 3000,
+    port: 3001,
     host: true,
     open: true
   },
@@ -109,5 +86,11 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+  },
+
+  resolve: {
+    alias: {
+      '@': '/src'
+    }
   }
 })

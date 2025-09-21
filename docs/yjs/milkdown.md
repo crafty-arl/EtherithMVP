@@ -1,15 +1,6 @@
----
-title: Milkdown
-source: https://docs.yjs.dev/ecosystem/editor-bindings/milkdown
-scraped_at: 2025-09-20 19:50:47
----
-
 # Milkdown
 
 [Edit](https://github.com/yjs/docs/blob/main/ecosystem/editor-bindings/milkdown.md)
-
-1. [🔥Ecosystem](/ecosystem)
-2. [Editor Bindings](/ecosystem/editor-bindings)
 
 # Milkdown
 
@@ -30,3 +21,5 @@ Getting Started Guide
 Last updated 2 years ago
 
 Was this helpful?
+
+Source: https://docs.yjs.dev/ecosystem/editor-bindings/milkdown

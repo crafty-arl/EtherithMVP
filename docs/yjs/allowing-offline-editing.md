@@ -1,14 +1,6 @@
----
-title: Offline Support
-source: https://docs.yjs.dev/getting-started/allowing-offline-editing
-scraped_at: 2025-09-20 19:51:29
----
-
 # Offline Support
 
 [Edit](https://github.com/yjs/docs/blob/main/getting-started/allowing-offline-editing.md)
-
-1. [🚲Getting Started](/getting-started)
 
 # Offline Support
 
@@ -20,26 +12,15 @@ Adding offline support in Yjs is as easy as including the [y-indexeddb](https://
 
 Use
 
+[](#tab-use)
+
 Install
 
-Copy
-
-```javascript
-import { IndexeddbPersistence } from 'y-indexeddb'
-
-const ydoc = new Y.Doc()
-const roomName = 'my-room-name'
-const persistence = new IndexeddbPersistence(roomName, ydoc)
-
-// The persistence provider works similarly to the network providers:
-// const network = new WebrtcProvider(roomName)
-```
+[](#tab-install)
 
 Copy
 
-```javascript
-npm i y-indexeddb --save
-```
+Copy
 
 Now every change is persisted to a local database. The next time you visit your site, your document will be loaded from the IndexedDB database. Only the latest changes are synced over the network provider.
 
@@ -47,17 +28,15 @@ You can listen to `synced` events that fire when your client loaded content from
 
 Copy
 
-```javascript
-persistence.once('synced', () => { console.log('initial content loaded') })
-```
-
 Another advantage of using y-indexeddb is that it replicates state to every peer that ever visited the document. In case any peer (e.g. the server) loses some data, the other peers will eventually sync the latest document state back to the server.
-
-y-indexeddb works with any other provider. Again, Yjs providers are meshable. You can use several providers at the same time to achieve maximum reliability.
 
 Database providers also allow native applications to sync document state to a local database. There is a growing collection of providers that work in different environments available in the [ecosystem section](/ecosystem/database-provider).
 
-### Loading HTML content without network access
+### 
+
+[](#loading-html-content-without-network-access)
+
+Loading HTML content without network access
 
 In case you manage all application state with Yjs, you'll have an easy time adding offline support to your app. Simply add y-indexeddb and include a service worker to make the website accessible even without network access.
 
@@ -72,3 +51,5 @@ This resource is a great starting point to build your own service worker:
 Last updated 3 years ago
 
 Was this helpful?
+
+Source: https://docs.yjs.dev/getting-started/allowing-offline-editing

@@ -1,9 +1,3 @@
----
-title: Yjs in the Wild
-source: https://docs.yjs.dev/yjs-in-the-wild
-scraped_at: 2025-09-20 19:51:15
----
-
 # Yjs in the Wild
 
 [Edit](https://github.com/yjs/docs/blob/main/yjs-in-the-wild.md)
@@ -24,7 +18,7 @@ Below is a list of some featured users of Yjs.\
 
 [![Logo](https://docs.yjs.dev/~gitbook/image?url=https%3A%2F%2Fstatic.cargo.site%2Ffavicon%2Fc3-favicon.ico&width=20&dpr=4&quality=100&sign=fec8311d&sv=2)Cargo](https://cargo.site/)
 
-[![Logo](https://docs.yjs.dev/~gitbook/image?url=https%3A%2F%2Ftiptap.dev%2Ffavicon.svg&width=20&dpr=4&quality=100&sign=75449cae&sv=2)Dev toolkit for building collaborative editors – Tiptaptiptap\_editor](https://tiptap.dev/)
+[![Logo](https://docs.yjs.dev/~gitbook/image?url=https%3A%2F%2Ftiptap.dev%2Ffavicon.svg&width=20&dpr=4&quality=100&sign=75449cae&sv=2)Dev toolkit for building collaborative editors – Tiptaptiptap_editor](https://tiptap.dev/)
 
 [![Logo](https://docs.yjs.dev/~gitbook/image?url=https%3A%2F%2Froom.sh%2Fimg%2Ficons%2Ffavicon-196x196.png&width=20&dpr=4&quality=100&sign=84dd2fa4&sv=2)room.sh | The Better Way To Meetingroom.sh](https://room.sh/)
 
@@ -43,3 +37,5 @@ Below is a list of some featured users of Yjs.\
 Last updated 3 months ago
 
 Was this helpful?
+
+Source: https://docs.yjs.dev/yjs-in-the-wild

@@ -1,14 +1,6 @@
----
-title: Database Provider
-source: https://docs.yjs.dev/ecosystem/database-provider
-scraped_at: 2025-09-20 19:51:08
----
-
 # Database Provider
 
 [Edit](https://github.com/yjs/docs/blob/main/ecosystem/database-provider/README.md)
-
-1. [🔥Ecosystem](/ecosystem)
 
 # Database Provider
 
@@ -21,3 +13,5 @@ Database providers sync documents to a database
 Last updated 3 years ago
 
 Was this helpful?
+
+Source: https://docs.yjs.dev/ecosystem/database-provider

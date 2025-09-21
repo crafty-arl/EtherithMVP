@@ -1,14 +1,6 @@
----
-title: Editor Bindings
-source: https://docs.yjs.dev/ecosystem/editor-bindings
-scraped_at: 2025-09-20 19:51:30
----
-
 # Editor Bindings
 
 [Edit](https://github.com/yjs/docs/blob/main/ecosystem/editor-bindings/README.md)
-
-1. [🔥Ecosystem](/ecosystem)
 
 # Editor Bindings
 
@@ -21,3 +13,5 @@ Yjs supports several popular text and rich-text editors. This works by "binding"
 Last updated 1 year ago
 
 Was this helpful?
+
+Source: https://docs.yjs.dev/ecosystem/editor-bindings

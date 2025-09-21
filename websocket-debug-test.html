@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .log { padding: 5px; margin: 2px 0; border-left: 3px solid #007bff; background: #f8f9fa; }
+        .error { border-color: #dc3545; background: #f8d7da; }
+        .success { border-color: #28a745; background: #d4edda; }
+        .warning { border-color: #ffc107; background: #fff3cd; }
+        pre { background: #f1f3f4; padding: 10px; overflow: auto; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>WebSocket & Signaling Server Debug Test</h1>
+    <div id="logs"></div>
+
+    <script>
+        const logsDiv = document.getElementById('logs');
+
+        function log(message, type = 'log') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            logsDiv.appendChild(div);
+            console.log(message);
+        }
+
+        const signalingServers = [
+            'wss://y-webrtc-signaling.herokuapp.com',
+            'wss://y-webrtc-eu.fly.dev',
+            'wss://signaling.yjs.dev'
+        ];
+
+        async function testSignalingServers() {
+            log('🔍 Testing signaling server connectivity...', 'log');
+
+            for (const server of signalingServers) {
+                try {
+                    log(`🔍 Testing connection to ${server}`, 'log');
+
+                    const testWs = new WebSocket(server);
+                    let connectionTimer;
+
+                    const timeout = new Promise((_, reject) => {
+                        connectionTimer = setTimeout(() => {
+                            if (testWs.readyState !== WebSocket.OPEN) {
+                                testWs.close();
+                                reject(new Error('Connection timeout'));
+                            }
+                        }, 10000);
+                    });
+
+                    const connection = new Promise((resolve, reject) => {
+                        testWs.onopen = () => {
+                            clearTimeout(connectionTimer);
+                            log(`✅ ${server} is reachable and connected`, 'success');
+                            testWs.close();
+                            resolve();
+                        };
+
+                        testWs.onerror = (error) => {
+                            clearTimeout(connectionTimer);
+                            log(`❌ ${server} connection error`, 'error');
+                            console.error('WebSocket error:', error);
+                            reject(error);
+                        };
+
+                        testWs.onclose = (event) => {
+                            clearTimeout(connectionTimer);
+                            log(`🔍 ${server} closed - Code: ${event.code}, Reason: ${event.reason || 'None'}`, 'warning');
+                            if (event.code !== 1000 && event.code !== 1001) {
+                                reject(new Error(`Connection closed with code: ${event.code}`));
+                            }
+                        };
+                    });
+
+                    try {
+                        await Promise.race([connection, timeout]);
+                    } catch (error) {
+                        log(`💥 ${server} failed: ${error.message}`, 'error');
+                    }
+
+                } catch (error) {
+                    log(`💥 Failed to test ${server}: ${error.message}`, 'error');
+                }
+
+                // Wait between tests
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            log('🔍 Signaling server test complete', 'log');
+        }
+
+        // Run tests when page loads
+        window.addEventListener('load', () => {
+            log('🚀 Starting WebSocket debug tests...', 'log');
+            testSignalingServers();
+        });
+    </script>
+</body>
+</html>

@@ -1,14 +1,6 @@
----
-title: Connection Provider
-source: https://docs.yjs.dev/ecosystem/connection-provider
-scraped_at: 2025-09-20 19:51:28
----
-
 # Connection Provider
 
 [Edit](https://github.com/yjs/docs/blob/main/ecosystem/connection-provider/README.md)
-
-1. [🔥Ecosystem](/ecosystem)
 
 # Connection Provider
 
@@ -21,3 +13,5 @@ Connection providers handle syncing with the network
 Last updated 3 years ago
 
 Was this helpful?
+
+Source: https://docs.yjs.dev/ecosystem/connection-provider

@@ -1,9 +1,3 @@
----
-title: License ❤️
-source: https://docs.yjs.dev/license
-scraped_at: 2025-09-20 19:51:06
----
-
 # License ❤️
 
 [Edit](https://github.com/yjs/docs/blob/main/license.md)
@@ -12,9 +6,7 @@ scraped_at: 2025-09-20 19:51:06
 
 Yjs is permissively licensed ([MIT](https://github.com/yjs/yjs/blob/main/LICENSE)) and actively maintained since 2015 by [Kevin Jahns](https://github.com/dmonad).
 
-If you use Yjs in your project, then please do the moral thing and [sponsor further development](https://github.com/sponsors/dmonad) or ask me for a moral license.
-
-This project depends on **you** to finance further development and maintenance of the project. Even small donations can go a long way.
+This project depends on **you** to finance further development and maintenance of the project. Even small donations can go a long way. 
 
 I offer premium support for people and companies that sponsor me through contracting or [GitHub Sponsors](https://github.com/sponsors/dmonad). If you use Yjs in your company, convince your employer that you need premium support. I will be available for regular video calls, give feedback, and notify you whenever significant changes come up.
 
@@ -25,3 +17,5 @@ I offer premium support for people and companies that sponsor me through contrac
 Last updated 4 years ago
 
 Was this helpful?
+
+Source: https://docs.yjs.dev/license

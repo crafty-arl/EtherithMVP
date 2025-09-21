@@ -1,14 +1,6 @@
----
-title: Y.UndoManager
-source: https://docs.yjs.dev/api/undo-manager
-scraped_at: 2025-09-20 19:51:24
----
-
 # Y.UndoManager
 
 [Edit](https://github.com/yjs/docs/blob/main/api/undo-manager.md)
-
-1. [🔧API](/api)
 
 # Y.UndoManager
 
@@ -18,131 +10,56 @@ Yjs ships with a selective Undo/Redo manager. The changes can be optionally scop
 
 Copy
 
-```javascript
-import * as Y from 'yjs'
+`**const undoManager = new Y.UndoManager(scope: Y.AbstractType | Array <Y.AbstractType> [, {captureTimeout: number, trackedOrigins: Set<any>, deleteFilter: function(item):boolean}])**` Creates a new Y.UndoManager on a scope of shared types. If any of the specified types, or any of its children is modified, the UndoManager adds a reverse-operation on its stack. Optionally, you may specify `trackedOrigins` to track changes from different sources. By default, all local changes that don't specify a transaction `origin` will be tracked. The UndoManager merges edits that are created within a certain `captureTimeout` (defaults to 500ms). Set it to 0 to capture each change individually.
 
-const ytext = doc.getText('text')
-const undoManager = new Y.UndoManager(ytext)
+`**undoManager.undo()**` Undo the last operation on the UndoManager stack. The reverse operation will be put on the redo-stack.
 
-ytext.insert(0, 'abc')
-undoManager.undo()
-ytext.toString() // => ''
-undoManager.redo()
-ytext.toString() // => 'abc'
-```
+`**undoManager.redo()**` Redo the last operation on the redo-stack. I.e. the previous undo is reversed.
 
-`const undoManager = new Y.UndoManager(scope: Y.AbstractType | Array<Y.AbstractType> [, {captureTimeout: number, trackedOrigins: Set<any>, deleteFilter: function(item):boolean}])`
-Creates a new Y.UndoManager on a scope of shared types. If any of the specified types, or any of its children is modified, the UndoManager adds a reverse-operation on its stack. Optionally, you may specify `trackedOrigins` to track changes from different sources. By default, all local changes that don't specify a transaction `origin` will be tracked. The UndoManager merges edits that are created within a certain `captureTimeout` (defaults to 500ms). Set it to 0 to capture each change individually.
+`**undoManager.stopCapturing()**` Call `stopCapturing()` to ensure that the next operation that is put on the UndoManager is not merged with the previous operation.
 
-`undoManager.undo()`
-Undo the last operation on the UndoManager stack. The reverse operation will be put on the redo-stack.
+`**undoManager.clear()**` Delete all captured operations from the undo & redo stack.
 
-`undoManager.redo()`
-Redo the last operation on the redo-stack. I.e. the previous undo is reversed.
+`**undoManager.on('stack-item-added', function({stackItem, origin, type:'undo'|'redo', changedParentTypes}, undoManager))**` Register an event handler that is called when a `StackItem` is added to the undo- or the redo-stack.
 
-`undoManager.stopCapturing()`
-Call `stopCapturing()` to ensure that the next operation that is put on the UndoManager is not merged with the previous operation.
+`**undoManager.on('stack-item-popped', function({stackItem, origin, type:'undo'|'redo', changedParentTypes}, undoManager))**` Register an event handler that is called when a `StackItem` is popped from the undo- or the redo-stack.
 
-`undoManager.clear()`
-Delete all captured operations from the undo & redo stack.
+`**undoManager.on('stack-item-updated', function({stackItem, origin, type:'undo'|'redo', changedParentTypes}, undoManager))**` Register an event handler that is called when a `StackItem` is updated in the undo- or the redo-stack.
 
-`undoManager.on('stack-item-added', function({stackItem, origin, type:'undo'|'redo', changedParentTypes}, undoManager))`
-Register an event handler that is called when a `StackItem` is added to the undo- or the redo-stack.
+### 
 
-`undoManager.on('stack-item-popped', function({stackItem, origin, type:'undo'|'redo', changedParentTypes}, undoManager))`
-Register an event handler that is called when a `StackItem` is popped from the undo- or the redo-stack.
+[](#example-stop-capturing)
 
-`undoManager.on('stack-item-updated', function({stackItem, origin, type:'undo'|'redo', changedParentTypes}, undoManager))`
-Register an event handler that is called when a `StackItem` is updated in the undo- or the redo-stack.
-
-### **Example: Stop Capturing**
+**Example: Stop Capturing**
 
 UndoManager merges Undo-StackItems if they are created within time-gap smaller than `options.captureTimeout`. Call `um.stopCapturing()` so that the next StackItem won't be merged.
 
 Copy
 
-```javascript
-// without stopCapturing
-ytext.insert(0, 'a')
-ytext.insert(1, 'b')
-undoManager.undo()
-ytext.toString() // => '' (note that 'ab' was removed)
+### 
 
-// with stopCapturing
-ytext.insert(0, 'a')
-undoManager.stopCapturing()
-ytext.insert(0, 'b')
-undoManager.undo()
-ytext.toString() // => 'a' (note that only 'b' was removed)
-```
+[](#example-specify-tracked-origins)
 
-### **Example: Specify tracked origins**
+**Example: Specify tracked origins**
 
 Every change on the shared document has an origin. If no origin was specified, it defaults to `null`. By specifying `trackedOrigins` you can selectively specify which changes should be tracked by `UndoManager`. The UndoManager instance is always added to `trackedOrigins`.
 
 Copy
 
-```javascript
-class CustomBinding {}
+### 
 
-const ytext = doc.getText('text')
-const undoManager = new Y.UndoManager(ytext, {
-  trackedOrigins: new Set([42, CustomBinding])
-})
+[](#example-add-additional-information-to-the-stackitems)
 
-ytext.insert(0, 'abc')
-undoManager.undo()
-ytext.toString() // => 'abc' (does not track because origin `null` and not part
-                 //           of `trackedOrigins`)
-ytext.delete(0, 3) // revert change
-
-doc.transact(() => {
-  ytext.insert(0, 'abc')
-}, 42)
-undoManager.undo()
-ytext.toString() // => '' (tracked because origin is an instance of `trackedOrigins`)
-
-doc.transact(() => {
-  ytext.insert(0, 'abc')
-}, 41)
-undoManager.undo()
-ytext.toString() // => 'abc' (not tracked because 41 is not an instance of
-                 //        `trackedOrigins`)
-ytext.delete(0, 3) // revert change
-
-doc.transact(() => {
-  ytext.insert(0, 'abc')
-}, new CustomBinding())
-undoManager.undo()
-ytext.toString() // => '' (tracked because origin is a `CustomBinding` and
-                 //        `CustomBinding` is in `trackedOrigins`)
-```
-
-### **Example: Add additional information to the StackItems**
+**Example: Add additional information to the StackItems**
 
 When undoing or redoing a previous action, it is often expected to restore additional meta information like the cursor location or the view on the document. You can assign meta-information to Undo-/Redo-StackItems.
 
 Copy
-
-```javascript
-const ytext = doc.getText('text')
-const undoManager = new Y.UndoManager(ytext, {
-  trackedOrigins: new Set([42, CustomBinding])
-})
-
-undoManager.on('stack-item-added', event => {
-  // save the current cursor location on the stack-item
-  event.stackItem.meta.set('cursor-location', getRelativeCursorLocation())
-})
-
-undoManager.on('stack-item-popped', event => {
-  // restore the current cursor location on the stack-item
-  restoreCursorLocation(event.stackItem.meta.get('cursor-location'))
-})
-```
 
 [PreviousY.XmlText](/api/shared-types/y.xmltext)[NextY.Event](/api/y.event)
 
 Last updated 3 months ago
 
 Was this helpful?
+
+Source: https://docs.yjs.dev/api/undo-manager
