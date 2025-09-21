@@ -32,6 +32,7 @@ function App() {
     debugInfo,
     isAuthenticated,
     loginWithDiscord,
+    logout,
     uploadMemory,
     loadMemories,
     loadPublicArchive,
@@ -101,6 +102,7 @@ function App() {
           user={user}
           isAuthenticated={isAuthenticated}
           onLogin={loginWithDiscord}
+          onLogout={logout}
           isArchiveMode={isArchiveMode}
         />
 

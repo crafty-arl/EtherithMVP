@@ -123,9 +123,17 @@ export function useEtherith() {
     if (authData) {
       try {
         const userData = JSON.parse(atob(authData))
+        console.log('✅ Found auth data in URL:', userData.username)
         setUser(userData)
         setIsAuthenticated(true)
         updateProfileUI(userData)
+        
+        // Store in Yjs for persistence
+        if (profileDataRef.current) {
+          profileDataRef.current.set('user', userData)
+          profileDataRef.current.set('lastLogin', Date.now())
+        }
+        
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname)
         return
@@ -134,11 +142,43 @@ export function useEtherith() {
       }
     }
 
+    // Check localStorage for auth data (local-first approach)
+    try {
+      const storedUserData = localStorage.getItem('etherith_user')
+      const authTimestamp = localStorage.getItem('etherith_auth_timestamp')
+      
+      if (storedUserData && authTimestamp) {
+        const userData = JSON.parse(storedUserData)
+        const timeDiff = Date.now() - parseInt(authTimestamp)
+        
+        // Check if auth is not too old (24 hours)
+        if (timeDiff < 24 * 60 * 60 * 1000) {
+          console.log('👤 Found valid local auth session:', userData.username)
+          setUser(userData)
+          setIsAuthenticated(true)
+          updateProfileUI(userData)
+          
+          // Store in Yjs for persistence
+          if (profileDataRef.current) {
+            profileDataRef.current.set('user', userData)
+            profileDataRef.current.set('lastLogin', parseInt(authTimestamp))
+          }
+          return
+        } else {
+          console.log('🕒 Local auth expired, clearing...')
+          localStorage.removeItem('etherith_user')
+          localStorage.removeItem('etherith_auth_timestamp')
+        }
+      }
+    } catch (error) {
+      console.error('Error checking localStorage auth:', error)
+    }
+
     // Check Yjs storage for existing user
     if (profileDataRef.current) {
       const storedUser = profileDataRef.current.get('user')
       if (storedUser) {
-        console.log('👤 Found existing user session')
+        console.log('👤 Found existing user session in Yjs')
         setUser(storedUser)
         setIsAuthenticated(true)
         updateProfileUI(storedUser)
@@ -186,18 +226,35 @@ export function useEtherith() {
     const popup = window.open(
       discordAuthURL.toString(),
       'discord-oauth',
-      'width=500,height=700,scrollbars=yes,resizable=yes'
+      'width=500,height=700,scrollbars=yes,resizable=yes,top=100,left=100'
     )
 
     // Listen for messages from popup
     const handleMessage = (event) => {
+      // More permissive origin checking for local development
       const allowedOrigins = [
         window.location.origin,
         'https://etherith-production.pages.dev',
-        'https://68920ed9.etherith-production.pages.dev'
+        'https://68920ed9.etherith-production.pages.dev',
+        'https://42f4893b.etherith-production.pages.dev',
+        'https://a2cf5a65.etherith-production.pages.dev',
+        'https://9efb9334.etherith-production.pages.dev',
+        'https://98ffc18b.etherith-production.pages.dev',
+        'https://cfae9d34.etherith-production.pages.dev',
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:5173'
       ]
 
-      if (!allowedOrigins.some(origin => event.origin.startsWith(origin.split('.')[0]))) {
+      const isAllowedOrigin = allowedOrigins.some(origin => 
+        event.origin === origin || 
+        event.origin.startsWith(origin.split('.')[0]) ||
+        event.origin.includes('localhost') ||
+        event.origin.includes('127.0.0.1')
+      )
+
+      if (!isAllowedOrigin) {
         console.warn('Invalid origin:', event.origin)
         return
       }
@@ -205,21 +262,40 @@ export function useEtherith() {
       if (event.data.type === 'DISCORD_LOGIN_SUCCESS') {
         console.log('✅ Discord login successful:', event.data.user)
 
-        // Store user data
-        setUser(event.data.user)
-        setIsAuthenticated(true)
+        // Store user data in multiple places for redundancy
+        const userData = event.data.user
+        
+        // Store in localStorage for local-first approach
+        try {
+          localStorage.setItem('etherith_user', JSON.stringify(userData))
+          localStorage.setItem('etherith_auth_timestamp', Date.now().toString())
+          console.log('💾 User data stored in localStorage')
+        } catch (error) {
+          console.warn('⚠️ Failed to store in localStorage:', error)
+        }
 
         // Store in Yjs document for persistence
         if (profileDataRef.current) {
-          profileDataRef.current.set('user', event.data.user)
+          profileDataRef.current.set('user', userData)
           profileDataRef.current.set('lastLogin', Date.now())
+          console.log('💾 User data stored in Yjs')
         }
 
-        updateProfileUI(event.data.user)
+        // Update UI
+        setUser(userData)
+        setIsAuthenticated(true)
+        updateProfileUI(userData)
+        
+        // Clean up
         window.removeEventListener('message', handleMessage, false)
+        clearInterval(checkClosed)
+        
+        console.log('🎉 Login complete!')
       } else if (event.data.type === 'DISCORD_LOGIN_ERROR') {
         console.error('❌ Discord login failed:', event.data.error)
         alert('Discord login failed. Please try again.')
+        window.removeEventListener('message', handleMessage, false)
+        clearInterval(checkClosed)
       }
     }
 
@@ -231,14 +307,72 @@ export function useEtherith() {
       return
     }
 
-    // Monitor popup closure
+    // Monitor popup closure and check for localStorage auth
     const checkClosed = setInterval(() => {
       if (popup.closed) {
         clearInterval(checkClosed)
         window.removeEventListener('message', handleMessage, false)
+        
+        // Check if user logged in via localStorage fallback
+        setTimeout(() => {
+          try {
+            const storedUserData = localStorage.getItem('etherith_user')
+            if (storedUserData) {
+              const userData = JSON.parse(storedUserData)
+              console.log('🔄 Found auth data in localStorage after popup closed:', userData.username)
+              
+              // Store in Yjs
+              if (profileDataRef.current) {
+                profileDataRef.current.set('user', userData)
+                profileDataRef.current.set('lastLogin', Date.now())
+              }
+              
+              // Update UI
+              setUser(userData)
+              setIsAuthenticated(true)
+              updateProfileUI(userData)
+            }
+          } catch (error) {
+            console.error('Error checking localStorage after popup close:', error)
+          }
+        }, 1000)
       }
     }, 1000)
   }, [updateProfileUI])
+
+  // Logout function
+  const logout = useCallback(() => {
+    console.log('👋 Logging out user...')
+    
+    // Clear localStorage
+    try {
+      localStorage.removeItem('etherith_user')
+      localStorage.removeItem('etherith_auth_timestamp')
+      console.log('🗑️ Cleared localStorage auth data')
+    } catch (error) {
+      console.warn('⚠️ Failed to clear localStorage:', error)
+    }
+    
+    // Clear Yjs storage
+    if (profileDataRef.current) {
+      profileDataRef.current.delete('user')
+      profileDataRef.current.delete('lastLogin')
+      console.log('🗑️ Cleared Yjs auth data')
+    }
+    
+    // Reset state
+    setUser(null)
+    setIsAuthenticated(false)
+    
+    // Update debug info
+    setDebugInfo({
+      status: 'Logged out',
+      authenticated: false,
+      timestamp: new Date().toISOString()
+    })
+    
+    console.log('✅ Logout complete')
+  }, [])
 
   // Load memories from storage
   const loadMemoriesFromStorage = useCallback(() => {
@@ -502,6 +636,7 @@ export function useEtherith() {
     debugInfo,
     isAuthenticated,
     loginWithDiscord,
+    logout,
     uploadMemory,
     loadMemories: loadMemoriesFromStorage,
     loadPublicArchive,

@@ -15,6 +15,7 @@ export default function Sidebar({
   user,
   isAuthenticated,
   onLogin,
+  onLogout,
   isArchiveMode
 }) {
   return (
@@ -100,26 +101,42 @@ export default function Sidebar({
           </motion.button>
         ) : (
           <motion.div
-            className="flex items-center gap-4 mobile:flex-col mobile:gap-1"
+            className="flex flex-col gap-3 mobile:gap-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }}
           >
-            <div className="w-12 h-12 rounded-xl bg-gray-200 flex items-center justify-center overflow-hidden motion-luxury mobile:w-8 mobile:h-8">
-              <img
-                src={user.avatarURL}
-                alt={user.username}
-                className="w-full h-full object-cover"
-              />
+            <div className="flex items-center gap-4 mobile:flex-col mobile:gap-1">
+              <div className="w-12 h-12 rounded-xl bg-gray-200 flex items-center justify-center overflow-hidden motion-luxury mobile:w-8 mobile:h-8">
+                <img
+                  src={user.avatarURL}
+                  alt={user.username}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="mobile:text-center">
+                <h3 className="text-base font-semibold mb-1 mobile:text-xs mobile:mb-0">
+                  {user.username}
+                </h3>
+                <p className="text-xs opacity-70 uppercase tracking-wider mobile:hidden">
+                  Connected
+                </p>
+              </div>
             </div>
-            <div className="mobile:text-center">
-              <h3 className="text-base font-semibold mb-1 mobile:text-xs mobile:mb-0">
-                {user.username}
-              </h3>
-              <p className="text-xs opacity-70 uppercase tracking-wider mobile:hidden">
-                Connected
-              </p>
-            </div>
+            
+            <motion.button
+              onClick={onLogout}
+              className={`
+                bg-transparent text-current border border-current/30 py-2 px-4 rounded-lg cursor-pointer
+                font-medium text-xs tracking-tight w-full motion-luxury uppercase
+                hover:bg-current/10 hover:border-current/50
+                ${isArchiveMode ? 'hover:bg-white/10' : ''}
+              `}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Disconnect
+            </motion.button>
           </motion.div>
         )}
       </div>
