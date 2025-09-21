@@ -10,6 +10,9 @@ import ArchiveView from './components/ArchiveView'
 import ProfileView from './components/ProfileView'
 import SettingsView from './components/SettingsView'
 import DebugPanel from './components/DebugPanel'
+import PWAInstallPrompt from './components/PWAInstallPrompt'
+import WalletFAB from './components/WalletFAB'
+import WalletOnboarding from './components/WalletOnboarding'
 import { commonPatterns } from './utils/mobileFirst'
 
 const views = {
@@ -26,7 +29,8 @@ const views = {
 function AppContent() {
   const [currentView, setCurrentView] = useState('vault')
   const [isArchiveMode, setIsArchiveMode] = useState(false)
-  const { showSidebar, showBottomNav, shouldAnimate } = useResponsiveContext()
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const { showSidebar, showBottomNav, shouldAnimate, isMobile } = useResponsiveContext()
 
   // Crossmint authentication state
   const { jwt } = useAuth()
@@ -46,6 +50,20 @@ function AppContent() {
     loadPublicArchive,
     searchArchive
   } = useEtherith(wallet)
+
+  // Check if onboarding should be shown
+  useEffect(() => {
+    if (isInitialized && !isAuthenticated) {
+      const hasSeenOnboarding = localStorage.getItem('etherith-onboarding-seen')
+      if (!hasSeenOnboarding) {
+        // Small delay to let the app initialize
+        const timer = setTimeout(() => {
+          setShowOnboarding(true)
+        }, 1000)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [isInitialized, isAuthenticated])
 
   // Handle view switching
   const switchView = (viewName) => {
@@ -118,6 +136,7 @@ function AppContent() {
         connectionStatus={connectionStatus}
         onSearchPress={() => console.log('Search pressed')}
         onNotificationPress={() => console.log('Notifications pressed')}
+        showWalletWidget={true}
       />
 
       {/* Main Content Layout - Mobile First */}
@@ -125,7 +144,7 @@ function AppContent() {
         ${commonPatterns.responsiveContainer}
         ${showBottomNav ? 'pb-nav-bar' : ''}
         ${showBottomNav ? 'pt-top-bar' : ''}
-        ${showSidebar ? 'lg:grid lg:grid-cols-[var(--sidebar-width)_1fr] lg:pt-0' : ''}
+        ${showSidebar ? 'lg:grid lg:grid-cols-[280px_1fr] lg:pt-0' : ''}
         transition-all duration-300 ease-out
       `}>
 
@@ -171,6 +190,25 @@ function AppContent() {
           </div>
         </main>
       </div>
+
+      {/* Mobile Wallet FAB - Provides prominent wallet access */}
+      {isMobile && (
+        <WalletFAB
+          variant="smart"
+          position="bottom-right"
+          offset="nav-aware"
+        />
+      )}
+
+      {/* Wallet Onboarding - Auto-shows for new users */}
+      <WalletOnboarding
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        autoShow={true}
+      />
+
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
     </div>
   )
 }
