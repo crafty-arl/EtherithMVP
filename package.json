@@ -8,8 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name=etherith-mvp",
-    "deploy-git": "git add . && git commit -m 'Deploy updates' && git push origin main",
+    "deploy-manual": "npm run build && wrangler pages deploy dist --project-name=etherith-mvp",
+    "deploy": "git add . && git commit -m 'Deploy updates' && git push origin main",
     "cf-dev": "wrangler pages dev dist",
     "cf-preview": "wrangler pages dev dist --compatibility-date=2025-09-21",
     "setup-discord": "node scripts/setup-discord.js"
