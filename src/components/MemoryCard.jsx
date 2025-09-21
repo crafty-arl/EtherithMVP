@@ -2,6 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Calendar, FileText, Link as LinkIcon, AlertCircle, CheckCircle, Clock } from 'lucide-react'
 import { useResponsiveContext } from '../context/ResponsiveContext'
+import { StatusBadge, TypeBadge, VisibilityBadge, Button } from './ui'
 
 export default function MemoryCard({ memory, index, isArchiveMode, formatFileSize }) {
   const { shouldAnimate, isMobile, isTouch, hasHover } = useResponsiveContext()
@@ -41,14 +42,12 @@ export default function MemoryCard({ memory, index, isArchiveMode, formatFileSiz
   return (
     <motion.div
       className={`
-        w-full max-w-full p-lg bg-vault-card rounded-lg border border-current motion-luxury
-        relative overflow-hidden cursor-pointer hover-lift-strong
-        sm:w-card-sm sm:p-xl
-        lg:w-card-md
+        memory-card w-full max-w-full
         ${isArchiveMode ? 'bg-archive-card text-archive-text' : ''}
-        before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5
-        before:bg-current before:scale-x-0 before:origin-left before:transition-transform
-        before:duration-medium before:ease-luxury hover:before:scale-x-100
+        group relative overflow-hidden
+        transition-all duration-500 ease-luxury
+        hover:shadow-2xl hover:z-20
+        ${hasHover ? 'hover:scale-105' : ''}
       `}
       initial={shouldAnimate ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
@@ -57,101 +56,110 @@ export default function MemoryCard({ memory, index, isArchiveMode, formatFileSiz
         delay: Math.min(index * (isMobile ? 0.05 : 0.1), 0.5),
         ease: [0.33, 1, 0.68, 1]
       } : {}}
-      whileHover={hasHover && shouldAnimate ? { y: -12, scale: 1.02 } : {}}
+      whileHover={hasHover && shouldAnimate ? { 
+        y: -12, 
+        scale: 1.02,
+        transition: { duration: 0.3, ease: [0.33, 1, 0.68, 1] }
+      } : {}}
       whileTap={isTouch ? { scale: 0.98 } : {}}
     >
       {/* Header */}
-      <div className="flex justify-between items-start mb-md">
-        <span className={`
-          bg-transparent text-current border border-current px-sm py-xs rounded-xl
-          text-[10px] font-semibold uppercase tracking-wider opacity-80
-        `}>
-          {memory.type}
-        </span>
+      <div className="flex justify-between items-start mb-4">
+        <div className="flex items-center gap-2">
+          <TypeBadge type={memory.type} size="sm" />
+          {memory.visibility === 'public' && (
+            <VisibilityBadge visibility="public" size="sm" />
+          )}
+        </div>
 
-        <span className={`
-          text-[10px] px-sm py-xs rounded-xl font-semibold uppercase tracking-wider
-          border border-current bg-transparent relative overflow-hidden
-          ${getStatusClasses(memory.status)}
-          before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:bottom-0
-          before:bg-current before:opacity-10 before:transition-opacity before:duration-fast
-          hover:before:opacity-20
-        `}>
-          <span className="flex items-center gap-1">
-            {getStatusIcon(memory.status)}
-            {memory.status}{memory.pinned ? ' 📌' : ''}
-          </span>
-        </span>
+        <div className="flex items-center gap-2">
+          <StatusBadge
+            status={memory.status}
+            className={`
+              text-xs ${getStatusClasses(memory.status)}
+              hover:scale-105 motion-smooth
+            `}
+          />
+          {memory.pinned && <span className="text-lg">📌</span>}
+        </div>
       </div>
 
-      {/* Memory Note */}
-      <div className={`
-        my-md text-base leading-relaxed font-normal tracking-tight opacity-90
-        before:content-['"'] before:text-xl before:opacity-40
-        after:content-['"'] after:text-xl after:opacity-40
-      `}>
-        {memory.note}
+      {/* Memory Note - Enhanced for desktop */}
+      <div className="mb-4">
+        <blockquote className="text-base leading-relaxed font-normal tracking-tight opacity-90 italic group-hover:opacity-100 transition-opacity duration-300">
+          "{memory.note}"
+        </blockquote>
       </div>
 
       {/* Error Display */}
       {memory.error && (
-        <div className="my-2 p-2 bg-red-500/10 border border-red-500/20 rounded text-xs text-red-600 dark:text-red-400">
-          ❌ {memory.error}
-        </div>
+        <StatusBadge
+          status="error"
+          className="w-full mb-4 p-3 justify-start"
+        >
+          <AlertCircle className="w-4 h-4 mr-2" />
+          {memory.error}
+        </StatusBadge>
       )}
 
       {/* Metadata */}
-      <div className={`
-        flex justify-between items-center mt-lg pt-md border-t border-current
-        text-[11px] opacity-70 uppercase tracking-wider font-medium
-      `}>
-        <span className="flex items-center gap-1">
-          <Calendar className="w-3 h-3" />
-          {new Date(memory.timestamp).toLocaleDateString()}
-        </span>
-        <span className="flex items-center gap-1">
-          <FileText className="w-3 h-3" />
-          {memory.fileName} ({formatFileSize(memory.fileSize)})
-        </span>
+      <div className="mt-4 pt-4 border-t border-current/20">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 text-xs opacity-70">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              {new Date(memory.timestamp).toLocaleDateString()}
+            </span>
+            <span className="flex items-center gap-1">
+              <FileText className="w-3 h-3" />
+              {formatFileSize(memory.fileSize)}
+            </span>
+          </div>
+          <div className="text-xs font-mono opacity-60">
+            {memory.fileName}
+          </div>
+        </div>
       </div>
 
       {/* CID Link */}
       {memory.cid && (
         <motion.div
-          className="mt-3"
+          className="mt-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <a
-            href={`https://ipfs.io/ipfs/${memory.cid}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`
-              inline-flex items-center gap-1 text-current no-underline font-mono text-[11px]
-              font-semibold tracking-wider py-1.5 px-3 min-h-touch min-w-touch border border-current rounded
-              motion-smooth hover:bg-current hover:text-vault-card hover:-translate-y-px
-              active:scale-95 justify-center
-              ${isArchiveMode ? 'hover:text-archive-card' : ''}
-            `}
-            title="View on IPFS"
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-center font-mono text-xs group-hover:bg-current/10 transition-all duration-300 hover:scale-105"
+            asChild
           >
-            <LinkIcon className="w-3 h-3" />
-            {memory.cid.substring(0, 12)}...
-          </a>
+            <a
+              href={`https://ipfs.io/ipfs/${memory.cid}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="View on IPFS"
+              className="focus:outline-none focus:ring-2 focus:ring-current focus:ring-opacity-50 rounded-lg"
+            >
+              <LinkIcon className="w-3 h-3 group-hover:rotate-12 transition-transform duration-300" />
+              <span className="truncate max-w-[120px]">
+                {memory.cid.substring(0, 12)}...
+              </span>
+            </a>
+          </Button>
 
           {memory.proof && memory.proof.pinned && (
-            <div className="text-[10px] text-green-600 dark:text-green-400 mt-1">
+            <StatusBadge
+              status="uploaded"
+              className="w-full mt-2 justify-center"
+            >
+              <CheckCircle className="w-3 h-3 mr-1" />
               Permanently preserved
-            </div>
+            </StatusBadge>
           )}
         </motion.div>
       )}
-
-      {/* Visibility Indicator */}
-      <div className="mt-2 text-[10px] opacity-60 uppercase tracking-widest">
-        {memory.visibility === 'public' ? 'Public Memory' : 'Private Memory'}
-      </div>
     </motion.div>
   )
 }

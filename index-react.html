@@ -10,6 +10,151 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="description" content="Decentralized Memory Vault with Discord OAuth, IPFS Storage, and AI Moderation">
     <meta name="theme-color" content="#000000">
+    <style>
+        :root {
+            /* Pure Monochrome Palette */
+            --black: #000000;
+            --white: #FFFFFF;
+
+            /* Contextual Colors */
+            --vault-bg: var(--white);
+            --vault-card: var(--black);
+            --vault-text: var(--black);
+            --archive-bg: var(--black);
+            --archive-card: var(--white);
+            --archive-text: var(--white);
+
+            /* Typography Scale - Fixed Sizes */
+            --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            /* Fixed Layout Dimensions - Compact */
+            --sidebar-width: 280px;
+            --sidebar-width-mobile: 100vw;
+            --sidebar-height-mobile: 60px;
+
+            --header-height: 80px;
+            --header-height-mobile: 70px;
+
+            --content-padding: 40px;
+            --content-padding-tablet: 32px;
+            --content-padding-mobile: 24px;
+
+            /* Fixed Grid System - Compact */
+            --card-width: 280px;
+            --card-width-tablet: 260px;
+            --card-width-mobile: calc(100vw - 48px);
+            --card-height: auto;
+            --card-gap: 24px;
+            --card-gap-tablet: 20px;
+            --card-gap-mobile: 16px;
+
+            /* Fixed Spacing Scale - Compact */
+            --space-xs: 6px;
+            --space-sm: 12px;
+            --space-md: 18px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            --space-3xl: 60px;
+            --space-4xl: 80px;
+
+            /* Fixed Border & Radius */
+            --border-width: 1px;
+            --border-radius-sm: 8px;
+            --border-radius-md: 16px;
+            --border-radius-lg: 24px;
+
+            /* Motion System */
+            --ease-luxury: cubic-bezier(0.33, 1, 0.68, 1);
+            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --duration-fast: 200ms;
+            --duration-medium: 400ms;
+            --duration-slow: 600ms;
+
+            /* Breakpoints */
+            --breakpoint-mobile: 768px;
+            --breakpoint-tablet: 1024px;
+            --breakpoint-desktop: 1440px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--vault-bg);
+            color: var(--vault-text);
+            line-height: 1.6;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            transition: all var(--duration-luxury) var(--ease-luxury);
+            overflow-x: hidden;
+        }
+
+        #root {
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* Desktop-specific enhancements */
+        @media (min-width: 1024px) {
+            /* Enhanced hover effects for desktop */
+            .hover-lift:hover {
+                transform: translateY(-12px) scale(1.02);
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.2);
+            }
+
+            .archive-mode .hover-lift:hover {
+                box-shadow: 0 40px 100px rgba(255, 255, 255, 0.15);
+            }
+
+            /* Desktop navigation enhancements */
+            .nav-item:hover {
+                background-color: var(--color-text);
+                background-opacity: 0.08;
+                transform: translateX(8px);
+            }
+
+            /* Desktop content centering */
+            .desktop-content-center {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+
+            /* Desktop grid enhancements */
+            .desktop-grid {
+                justify-items: stretch;
+                max-width: 100%;
+            }
+
+            /* Desktop typography scaling */
+            .desktop-text-lg {
+                font-size: 1.125rem;
+                line-height: 1.7;
+            }
+
+            .desktop-text-xl {
+                font-size: 1.25rem;
+                line-height: 1.6;
+            }
+
+            /* Desktop spacing */
+            .desktop-space-y-12 > * + * {
+                margin-top: 3rem;
+            }
+
+            .desktop-space-y-16 > * + * {
+                margin-top: 4rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="root"></div>

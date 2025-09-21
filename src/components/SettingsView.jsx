@@ -39,7 +39,7 @@ export default function SettingsView({ isArchiveMode }) {
 
   return (
     <motion.div
-      className="max-w-3xl mx-auto space-y-3xl"
+      className="w-full max-w-3xl mx-auto space-y-3xl lg:max-w-5xl xl:max-w-6xl"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}

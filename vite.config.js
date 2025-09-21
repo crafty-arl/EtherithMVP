@@ -7,14 +7,15 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico'],
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}', 'index.html'],
-        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB limit
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/_/, /\/[^/?]+\.[^/]+$/],
-        additionalManifestEntries: [
-          { url: '/index.html', revision: null }
-        ],
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/esm\.sh\/yjs/,
@@ -23,7 +24,7 @@ export default defineConfig({
               cacheName: 'yjs-esm-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+                maxAgeSeconds: 604800 // 7 days
               }
             }
           },
@@ -34,7 +35,7 @@ export default defineConfig({
               cacheName: 'helia-esm-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+                maxAgeSeconds: 604800 // 7 days
               }
             }
           },
@@ -45,7 +46,7 @@ export default defineConfig({
               cacheName: 'crossmint-esm-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+                maxAgeSeconds: 604800 // 7 days
               }
             }
           }
@@ -54,7 +55,7 @@ export default defineConfig({
       manifest: {
         name: 'Etherith Memory Vault',
         short_name: 'Etherith',
-        description: 'Decentralized Memory Vault with Discord OAuth, IPFS Storage, and AI Moderation',
+        description: 'Decentralized Memory Vault with IPFS Storage',
         theme_color: '#000000',
         background_color: '#ffffff',
         display: 'standalone',
@@ -62,14 +63,11 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/favicon.ico',
-            sizes: '64x64 32x32 24x24 16x16',
+            src: 'favicon.ico',
+            sizes: '48x48',
             type: 'image/x-icon'
           }
         ]
-      },
-      devOptions: {
-        enabled: true
       }
     })
   ],
@@ -81,7 +79,7 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: true,
     rollupOptions: {
-      input: 'index-react.html',
+      input: 'index.html',
       output: {
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
@@ -94,7 +92,7 @@ export default defineConfig({
   server: {
     port: 3001,
     host: true,
-    open: true
+    open: '/'
   },
 
   base: '/',

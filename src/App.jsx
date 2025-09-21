@@ -13,14 +13,17 @@ import DebugPanel from './components/DebugPanel'
 import PWAInstallPrompt from './components/PWAInstallPrompt'
 import WalletFAB from './components/WalletFAB'
 import WalletOnboarding from './components/WalletOnboarding'
+import { UIShowcase } from './components/enhanced'
 import { commonPatterns } from './utils/mobileFirst'
+import ViewportDebugger from './components/ViewportDebugger'
 
 const views = {
   vault: { title: 'Vault', subtitle: 'Preserve what matters', component: VaultView },
   upload: { title: 'Preserve', subtitle: 'Every memory, proofed forever', component: UploadView },
   archive: { title: 'Archive', subtitle: 'Safe. Private. Immutable.', component: ArchiveView },
   profile: { title: 'Identity', subtitle: 'Your digital signature', component: ProfileView },
-  settings: { title: 'Protocol', subtitle: 'Configure preservation', component: SettingsView }
+  settings: { title: 'Protocol', subtitle: 'Configure preservation', component: SettingsView },
+  showcase: { title: 'UI Demo', subtitle: 'Enhanced component system', component: UIShowcase }
 }
 
 /**
@@ -90,34 +93,51 @@ function AppContent() {
   const currentViewData = views[currentView] || views.vault
   const ViewComponent = currentViewData.component
 
-  // Page transition variants
+  // Enhanced page transition variants
   const pageVariants = {
-    initial: { opacity: 0, y: 20 },
-    in: { opacity: 1, y: 0 },
-    out: { opacity: 0, y: -20 }
+    initial: { opacity: 0, y: 30, scale: 0.98 },
+    in: { opacity: 1, y: 0, scale: 1 },
+    out: { opacity: 0, y: -30, scale: 1.02 }
   }
 
   const pageTransition = {
     type: 'tween',
     ease: [0.33, 1, 0.68, 1], // luxury easing
-    duration: 0.6
+    duration: 0.8
   }
 
   if (!isInitialized) {
     return (
-      <div className="min-h-screen-mobile lg:min-h-screen bg-white flex items-center justify-center p-content">
+      <div className="min-h-screen-mobile lg:min-h-screen bg-vault-bg flex items-center justify-center p-content">
         <div className="text-center max-w-sm">
           <motion.div
-            className="w-16 h-16 border-2 border-black border-t-transparent rounded-full mx-auto mb-6"
+            className="w-20 h-20 border-4 border-current border-t-transparent rounded-full mx-auto mb-8"
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           />
-          <h2 className="text-xl sm:text-2xl font-display font-bold text-black mb-2">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-current mb-3">
             Initializing Etherith...
           </h2>
-          <p className="text-sm sm:text-base text-black/70">
+          <p className="text-base sm:text-lg text-current/70 mb-4">
             Loading memory vault systems
           </p>
+          <div className="flex justify-center space-x-1">
+            <motion.div
+              className="w-2 h-2 bg-current rounded-full"
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
+            />
+            <motion.div
+              className="w-2 h-2 bg-current rounded-full"
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
+            />
+            <motion.div
+              className="w-2 h-2 bg-current rounded-full"
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
+            />
+          </div>
         </div>
       </div>
     )
@@ -127,7 +147,13 @@ function AppContent() {
     <div className={`
       min-h-screen-mobile lg:min-h-screen transition-all duration-slow ease-luxury
       ${isArchiveMode ? 'archive-mode' : 'bg-vault-bg text-vault-text'}
+      ${showSidebar ? 'lg:flex lg:flex-row' : ''}
     `}>
+      {/* Skip to main content link for accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      
       {/* Adaptive Navigation System */}
       <AdaptiveNavigation
         currentView={currentView}
@@ -139,27 +165,36 @@ function AppContent() {
         showWalletWidget={true}
       />
 
-      {/* Main Content Layout - Mobile First */}
+      {/* Main Content Layout - Fixed Desktop Layout */}
       <div className={`
-        ${commonPatterns.responsiveContainer}
         ${showBottomNav ? 'pb-nav-bar' : ''}
         ${showBottomNav ? 'pt-top-bar' : ''}
-        ${showSidebar ? 'lg:grid lg:grid-cols-[280px_1fr] lg:pt-0' : ''}
-        transition-all duration-300 ease-out
+        ${showSidebar ? 'lg:flex-1 lg:min-h-screen' : ''}
+        transition-all duration-500 ease-luxury
+        ${!showSidebar ? commonPatterns.responsiveContainer : 'w-full'}
       `}>
 
-        {/* Main Content Area */}
-        <main className={`
-          flex flex-col min-h-screen-safe
-          ${showSidebar ? 'lg:overflow-hidden' : ''}
-          bg-vault-bg transition-all duration-slow ease-luxury
-        `}>
+        {/* Main Content Area - Fixed Desktop Layout */}
+        <main
+          id="main-content"
+          className={`
+            flex flex-col min-h-screen-safe
+            ${showSidebar ? 'lg:flex-1 lg:min-h-screen lg:w-full lg:bg-vault-bg' : ''}
+            bg-vault-bg transition-all duration-500 ease-luxury
+            ${showSidebar ? 'lg:shadow-inner' : ''}
+          `}
+          role="main"
+          aria-label="Main content area"
+        >
 
-          {/* Content Container */}
+          {/* Content Container - Fixed Desktop Centering */}
           <div className={`
-            flex-1 p-content sm:p-content-sm md:p-content-md lg:p-content-lg
-            ${showSidebar ? 'lg:overflow-y-auto lg:h-screen' : ''}
-            scrollbar-thin relative
+            flex-1 p-content sm:p-content-sm md:p-content-md lg:p-content-lg xl:p-content-xl
+            ${showSidebar ? 'lg:overflow-y-auto lg:h-screen lg:scrollbar-thin lg:w-full' : ''}
+            scrollbar-thin relative max-w-full
+            ${!showSidebar ? 'lg:max-w-7xl lg:mx-auto xl:max-w-8xl 2xl:max-w-screen-2xl' : ''}
+            ${showSidebar ? 'lg:flex lg:flex-col lg:justify-start lg:items-stretch' : ''}
+            transition-all duration-500 ease-luxury
           `}>
 
             {/* Page Content with Animations */}
@@ -209,6 +244,9 @@ function AppContent() {
 
       {/* PWA Install Prompt */}
       <PWAInstallPrompt />
+
+      {/* Viewport Debugger - Development only */}
+      <ViewportDebugger />
     </div>
   )
 }

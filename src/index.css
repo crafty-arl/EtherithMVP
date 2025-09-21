@@ -9,6 +9,36 @@
     box-sizing: border-box;
   }
 
+  :root {
+    /* Vault theme (light mode) */
+    --color-bg: #FFFFFF;
+    --color-text: #000000;
+    --color-card: #FFFFFF;
+    --color-border: #000000;
+    --color-accent: #000000;
+    --color-muted: #595959; /* Enhanced contrast: 7:1 ratio */
+    --color-subtle: #F5F5F5;
+
+    /* Semantic color mappings */
+    --vault-bg: var(--color-bg);
+    --vault-text: var(--color-text);
+    --vault-card: var(--color-card);
+    --vault-border: var(--color-border);
+    --vault-muted: var(--color-muted);
+    --vault-subtle: var(--color-subtle);
+  }
+
+  .archive-mode {
+    /* Archive theme (dark mode) - FIXED: Proper card contrast */
+    --color-bg: #000000;
+    --color-text: #FFFFFF;
+    --color-card: #1A1A1A;    /* FIXED: Dark gray cards for better contrast */
+    --color-border: #FFFFFF;
+    --color-accent: #FFFFFF;
+    --color-muted: #B3B3B3; /* Enhanced contrast: 7:1 ratio */
+    --color-subtle: #1A1A1A;
+  }
+
   body {
     font-family: theme('fontFamily.body');
     font-weight: 400;
@@ -16,11 +46,126 @@
     transition: all theme('transitionDuration.slow') theme('transitionTimingFunction.luxury');
     overflow-x: hidden;
     line-height: 1.6;
+    /* Use CSS custom properties for consistent theming */
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Custom scrollbar styles */
+  /* Enhanced typography hierarchy - Desktop optimized */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: theme('fontFamily.display');
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 700;
+  }
+
+  h3 {
+    font-size: clamp(1.25rem, 3vw, 1.875rem);
+    font-weight: 600;
+  }
+
+  h4 {
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    font-weight: 600;
+  }
+
+  /* Desktop-specific typography enhancements */
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      letter-spacing: -0.025em;
+    }
+
+    h3 {
+      font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+      letter-spacing: -0.02em;
+    }
+
+    /* Enhanced body text for desktop */
+    body {
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* Desktop-optimized paragraph spacing */
+    p {
+      margin-bottom: 1.25rem;
+    }
+
+    /* Enhanced button sizing for desktop */
+    .btn-primary,
+    .btn-secondary {
+      font-size: 16px;
+      padding: 12px 24px;
+      min-height: 48px;
+    }
+  }
+
+  /* Improved text selection */
+  ::selection {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+  }
+
+  /* Enhanced focus indicators for WCAG compliance */
+  :focus-visible {
+    outline: 3px solid var(--color-text);
+    outline-offset: 2px;
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px var(--color-bg);
+  }
+
+  /* High contrast focus for interactive elements */
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  a:focus-visible {
+    outline: 3px solid var(--color-text);
+    outline-offset: 2px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Skip to main content link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--color-text);
+    color: var(--color-bg);
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    z-index: 1000;
+    transition: top 0.3s ease;
+  }
+
+  .skip-link:focus {
+    top: 6px;
+  }
+
+  /* Custom scrollbar styles - Enhanced for accessibility */
   .scrollbar-thin::-webkit-scrollbar {
-    width: 1px;
+    width: 8px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
@@ -28,9 +173,19 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: currentColor;
-    border-radius: 0;
-    opacity: 0.3;
+    background: var(--color-text);
+    border-radius: 4px;
+    opacity: 0.6; /* Improved contrast */
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    opacity: 0.8;
+  }
+
+  /* Firefox scrollbar styling */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-text) transparent;
   }
 
   /* Custom animations */
@@ -52,12 +207,57 @@
     }
   }
 
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
   .animate-pulse-subtle {
     animation: pulse-subtle 3s infinite;
   }
 
   .animate-float {
     animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out;
   }
 }
 
@@ -67,7 +267,7 @@
     @apply bg-archive-bg text-archive-text;
   }
 
-  /* Luxury motion system */
+  /* Enhanced luxury motion system */
   .motion-luxury {
     transition: all theme('transitionDuration.medium') theme('transitionTimingFunction.luxury');
   }
@@ -76,7 +276,11 @@
     transition: all theme('transitionDuration.fast') theme('transitionTimingFunction.smooth');
   }
 
-  /* Custom focus styles */
+  .motion-subtle {
+    transition: all theme('transitionDuration.fast') theme('transitionTimingFunction.smooth');
+  }
+
+  /* Enhanced focus styles */
   .focus-luxury:focus {
     outline: none;
     transform: translateY(-2px);
@@ -87,7 +291,7 @@
     box-shadow: 0 12px 40px rgba(255, 255, 255, 0.1);
   }
 
-  /* Hover effects */
+  /* Sophisticated hover effects */
   .hover-lift:hover {
     transform: translateY(-8px) scale(1.01);
     box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
@@ -106,14 +310,234 @@
     box-shadow: 0 40px 100px rgba(255, 255, 255, 0.15);
   }
 
-  /* Button hover effects */
-  .btn-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  .hover-lift-subtle:hover {
+    transform: translateY(-4px) scale(1.005);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
   }
 
-  .archive-mode .btn-hover:hover {
-    box-shadow: 0 12px 40px rgba(255, 255, 255, 0.1);
+  .archive-mode .hover-lift-subtle:hover {
+    box-shadow: 0 16px 40px rgba(255, 255, 255, 0.08);
+  }
+
+  /* Enhanced button styles - WCAG compliant */
+  .btn-primary {
+    @apply px-6 py-3 bg-current text-vault-bg rounded-lg font-semibold text-base tracking-wide uppercase;
+    @apply motion-luxury hover:scale-105 hover:shadow-lg active:scale-95 min-h-touch;
+    @apply focus:outline-none focus:ring-4 focus:ring-current focus:ring-opacity-50;
+    @apply disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary:disabled {
+    pointer-events: none;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 border-2 border-current bg-transparent text-current rounded-lg font-semibold text-base tracking-wide uppercase;
+    @apply motion-luxury hover:bg-current hover:text-vault-bg hover:scale-105 active:scale-95 min-h-touch;
+    @apply focus:outline-none focus:ring-4 focus:ring-current focus:ring-opacity-50;
+    @apply disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-3 text-current bg-transparent rounded-lg font-medium text-base min-h-touch;
+    @apply motion-smooth hover:bg-current hover:bg-opacity-10 hover:scale-105 active:scale-95;
+    @apply focus:outline-none focus:ring-4 focus:ring-current focus:ring-opacity-50;
+    @apply disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  /* Button loading state */
+  .btn-loading {
+    pointer-events: none;
+  }
+
+  .btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Card component styles - FIXED: Added proper z-index */
+  .card {
+    @apply bg-vault-card border border-current rounded-lg p-lg motion-luxury;
+    @apply hover-lift-subtle cursor-pointer relative overflow-hidden z-10;
+  }
+
+  .card-elevated {
+    @apply bg-vault-card border border-current rounded-lg p-lg motion-luxury;
+    @apply hover-lift cursor-pointer relative overflow-hidden z-10;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-elevated:hover {
+    @apply z-20; /* Higher z-index on hover */
+  }
+
+  .archive-mode .card-elevated {
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.08);
+  }
+
+  /* Memory card specific styles - FIXED: Enhanced visibility and z-index */
+  .memory-card {
+    @apply card-elevated z-10;
+    @apply before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5;
+    @apply before:bg-current before:scale-x-0 before:origin-left before:transition-transform;
+    @apply before:duration-medium before:ease-luxury hover:before:scale-x-100;
+    @apply min-w-0; /* Prevent flex shrinking */
+    min-height: 200px; /* Ensure consistent card height */
+  }
+
+  .memory-card:hover {
+    @apply z-20; /* Higher z-index on hover for interactions */
+  }
+
+  /* Input styles - Enhanced accessibility */
+  .input-primary {
+    @apply w-full min-h-touch px-4 py-3 border-2 border-current rounded-lg bg-transparent;
+    @apply text-current motion-smooth;
+    @apply focus:ring-4 focus:ring-current focus:ring-opacity-20 focus:border-current;
+    @apply focus:outline-none invalid:border-red-500;
+    color: var(--color-text);
+  }
+
+  .input-primary::placeholder {
+    color: var(--color-muted);
+    opacity: 1;
+  }
+
+  .input-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .textarea-primary {
+    @apply input-primary resize-none;
+    @apply min-h-[120px] leading-relaxed;
+  }
+
+  /* Form validation styles */
+  .input-error {
+    @apply border-red-500 focus:ring-red-500;
+  }
+
+  .input-success {
+    @apply border-green-500 focus:ring-green-500;
+  }
+
+  /* Label styles for better accessibility */
+  .label-required::after {
+    content: ' *';
+    color: var(--color-text);
+    font-weight: bold;
+  }
+
+  /* Status indicators - Enhanced for accessibility */
+  .status-badge {
+    @apply inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-semibold uppercase tracking-wider;
+    @apply border-2 border-current bg-transparent motion-smooth min-h-touch;
+  }
+
+  /* High contrast status colors for monochrome theme */
+  .status-success {
+    @apply text-current border-current;
+    position: relative;
+  }
+
+  .status-success::before {
+    content: '✓';
+    margin-right: 4px;
+    font-weight: bold;
+  }
+
+  .status-warning {
+    @apply text-current border-current;
+    position: relative;
+  }
+
+  .status-warning::before {
+    content: '⚠';
+    margin-right: 4px;
+    font-weight: bold;
+  }
+
+  .status-error {
+    @apply text-current border-current;
+    position: relative;
+  }
+
+  .status-error::before {
+    content: '✗';
+    margin-right: 4px;
+    font-weight: bold;
+  }
+
+  .status-info {
+    @apply text-current border-current;
+    position: relative;
+  }
+
+  .status-info::before {
+    content: 'i';
+    margin-right: 4px;
+    font-weight: bold;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+
+  /* Navigation enhancements - Improved accessibility */
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base min-h-touch;
+    @apply motion-smooth hover:bg-current hover:bg-opacity-10 hover:scale-105 active:scale-95;
+    @apply focus:outline-none focus:ring-4 focus:ring-current focus:ring-opacity-50;
+    position: relative;
+  }
+
+  .nav-item-active {
+    @apply bg-current bg-opacity-15 font-semibold;
+  }
+
+  .nav-item-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    background: var(--color-text);
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* Mobile navigation specific styles */
+  .nav-mobile .nav-item {
+    @apply flex-col text-xs gap-1 px-2 py-2;
+  }
+
+  .nav-mobile .nav-item-active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background: var(--color-text);
+    border-radius: 0 0 2px 2px;
   }
 
   /* Scale hover effects */
@@ -121,9 +545,272 @@
     transform: scale(1.05) rotate(2deg);
   }
 
+  .scale-hover-subtle:hover {
+    transform: scale(1.02);
+  }
+
   /* Navigation hover effects */
   .nav-hover:hover {
     opacity: 1;
     transform: translateX(theme('spacing.sm'));
+  }
+
+  /* Loading states - Enhanced visibility */
+  .loading-skeleton {
+    @apply animate-pulse bg-current bg-opacity-15 rounded;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .loading-skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--color-text), transparent);
+    opacity: 0.1;
+    animation: shimmer 2s infinite;
+  }
+
+  .loading-spinner {
+    @apply animate-spin rounded-full border-4 border-current border-t-transparent;
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Not screen reader (visually hidden but available to screen readers) */
+  .not-sr-only {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Glass morphism effects */
+  .glass {
+    @apply backdrop-blur-lg bg-white/80 border border-white/20;
+  }
+
+  .archive-mode .glass {
+    @apply bg-black/80 border-white/20;
+  }
+
+  /* PWA Desktop Mode Fixes */
+  @media (display-mode: standalone) {
+    /* Ensure proper layout in PWA standalone mode */
+    body {
+      overflow-x: hidden;
+    }
+
+    /* Fix for window controls overlay */
+    @supports (display: window-controls-overlay) {
+      .pwa-desktop-content {
+        padding-top: env(titlebar-area-height, 0px);
+        padding-left: env(titlebar-area-x, 0px);
+        padding-right: env(titlebar-area-width, 0px);
+      }
+    }
+  }
+
+  /* Desktop PWA specific adjustments */
+  @media (min-width: 1024px) and (display-mode: standalone) {
+    .desktop-pwa-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+  }
+
+  /* Desktop-specific enhancements */
+  @media (min-width: 1024px) {
+    /* Ensure proper viewport height usage */
+    .min-h-screen {
+      min-height: 100vh;
+      min-height: 100dvh; /* Dynamic viewport height for better mobile support */
+    }
+
+    /* Fix desktop layout container */
+    .desktop-layout-container {
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+    }
+
+    /* Fix desktop content area */
+    .desktop-content-area {
+      flex: 1;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Fix desktop sidebar positioning */
+    .desktop-sidebar {
+      position: relative;
+      flex-shrink: 0;
+      height: 100vh;
+      height: 100dvh;
+      overflow-y: auto;
+    }
+
+    /* Ensure proper scrolling in desktop content */
+    .desktop-content-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: 100vh;
+      height: 100dvh;
+    }
+
+    /* Fix for desktop grid layout issues */
+    .desktop-grid-fix {
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+    }
+
+    /* Enhanced desktop viewport handling */
+    body {
+      overflow-x: hidden;
+      height: 100vh;
+      height: 100dvh;
+    }
+
+    #root {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .desktop-content-fix {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* Enhanced hover effects for desktop */
+    .hover-lift:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.2);
+    }
+
+    .archive-mode .hover-lift:hover {
+      box-shadow: 0 40px 100px rgba(255, 255, 255, 0.15);
+    }
+
+    /* Desktop navigation enhancements */
+    .nav-item:hover {
+      background-color: var(--color-text);
+      background-opacity: 0.08;
+      transform: translateX(8px);
+    }
+
+    /* Enhanced card interactions for desktop */
+    .memory-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+      z-index: 20;
+    }
+
+    .archive-mode .memory-card:hover {
+      box-shadow: 0 25px 60px rgba(255, 255, 255, 0.1);
+    }
+
+    /* Desktop form enhancements */
+    .input-primary:focus,
+    .textarea-primary:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Enhanced button interactions for desktop */
+    .btn-primary:hover,
+    .btn-secondary:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Desktop sidebar enhancements */
+    .sidebar-enhanced {
+      backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.95);
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .archive-mode .sidebar-enhanced {
+      background: rgba(0, 0, 0, 0.95);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Desktop content area enhancements */
+    .desktop-content-area {
+      background: linear-gradient(135deg, 
+        var(--color-bg) 0%, 
+        rgba(var(--color-bg), 0.98) 100%
+      );
+    }
+
+    /* Enhanced scrollbar for desktop */
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: var(--color-text);
+      border-radius: 6px;
+      opacity: 0.3;
+      transition: opacity 0.3s ease;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+      opacity: 0.6;
+    }
+
+    /* Desktop grid enhancements */
+    .desktop-grid {
+      display: grid;
+      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Enhanced focus states for desktop */
+    .focus-enhanced:focus-visible {
+      outline: 3px solid var(--color-text);
+      outline-offset: 4px;
+      border-radius: 8px;
+      box-shadow: 0 0 0 1px var(--color-bg);
+    }
   }
 }

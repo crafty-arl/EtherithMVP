@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { User, Shield, Calendar, Link as LinkIcon, ExternalLink } from 'lucide-react'
+import { Button } from './ui'
 
 export default function ProfileView({ user, isAuthenticated, onLogin, isArchiveMode }) {
   if (!isAuthenticated || !user) {
@@ -28,19 +29,20 @@ export default function ProfileView({ user, isAuthenticated, onLogin, isArchiveM
           <p className="text-sm opacity-60 mb-8">
             <small>Your identity, your vault</small>
           </p>
-          <motion.button
+          <Button
             onClick={onLogin}
-            className={`
-              px-8 py-4 border-2 border-current rounded-xl cursor-pointer font-semibold
-              text-sm tracking-wider uppercase bg-transparent motion-luxury btn-hover
-              hover:bg-current hover:text-vault-bg
-              ${isArchiveMode ? 'hover:text-archive-bg' : ''}
-            `}
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.95 }}
+            variant="outline"
+            size="lg"
+            className={`px-8 py-4 text-sm tracking-wider uppercase font-semibold ${isArchiveMode ? 'hover:text-archive-bg' : ''}`}
+            asChild
           >
-            Connect with Discord
-          </motion.button>
+            <motion.button
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Connect with Discord
+            </motion.button>
+          </Button>
         </div>
       </motion.div>
     )
@@ -48,7 +50,7 @@ export default function ProfileView({ user, isAuthenticated, onLogin, isArchiveM
 
   return (
     <motion.div
-      className="max-w-2xl mx-auto space-y-3xl"
+      className="w-full max-w-2xl mx-auto space-y-3xl lg:max-w-full xl:max-w-full"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}

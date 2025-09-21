@@ -125,7 +125,7 @@ function SideDrawer({
 
             {/* Wallet Connect */}
             <div className="p-content-sm border-t border-current/20">
-              <WalletConnect />
+              <WalletConnect variant="compact" />
             </div>
           </motion.nav>
         </>
@@ -135,7 +135,7 @@ function SideDrawer({
 }
 
 /**
- * DesktopSidebar - Traditional desktop navigation
+ * DesktopSidebar - Enhanced traditional desktop navigation
  */
 function DesktopSidebar({
   currentView,
@@ -144,55 +144,79 @@ function DesktopSidebar({
   isCollapsed = false,
   onToggleCollapse
 }) {
-  const { shouldAnimate } = useResponsiveContext()
+  const { shouldAnimate, isDesktop } = useResponsiveContext()
   const { jwt } = useAuth()
   const { wallet } = useWallet()
   const isAuthenticated = !!(jwt && wallet)
 
   return (
-    <nav className={`
-      ${navigationPatterns.sidebar.container}
-      ${isCollapsed ? 'w-16' : 'lg:w-sidebar-lg xl:w-sidebar-xl'}
-      ${isArchiveMode ? 'bg-archive-bg border-white text-white' : 'bg-vault-bg border-black text-black'}
-      transition-all duration-300 ease-out
-    `}>
-      {/* Logo & Toggle */}
+    <motion.nav 
+      className={`
+        ${navigationPatterns.sidebar.container}
+        ${isCollapsed ? 'w-16' : 'lg:w-sidebar-lg xl:w-sidebar-xl'}
+        ${isArchiveMode ? 'bg-archive-bg border-white text-white' : 'bg-vault-bg border-black text-black'}
+        transition-all duration-500 ease-luxury
+        shadow-lg backdrop-blur-sm
+        ${isCollapsed ? 'shadow-xl' : 'shadow-2xl'}
+        desktop-sidebar
+      `}
+      initial={false}
+      animate={{ 
+        width: isCollapsed ? 64 : (isDesktop ? 280 : 240),
+        boxShadow: isCollapsed 
+          ? '0 10px 25px rgba(0, 0, 0, 0.1)' 
+          : '0 20px 40px rgba(0, 0, 0, 0.15)'
+      }}
+      transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
+    >
+      {/* Logo & Toggle - Enhanced */}
       <motion.div
         className={`
           ${isCollapsed ? 'p-4' : 'p-content-lg pb-content'}
           text-left border-b border-current/20 relative cursor-pointer
-          transition-all duration-300 ease-out
+          transition-all duration-500 ease-luxury
+          hover:bg-current/5
         `}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
       >
         <div className="flex items-center justify-between">
-          <div className={isCollapsed ? 'hidden' : 'block'}>
+          <motion.div 
+            className={isCollapsed ? 'hidden' : 'block'}
+            initial={false}
+            animate={{ opacity: isCollapsed ? 0 : 1 }}
+            transition={{ duration: 0.3 }}
+          >
             <h1 className="font-display text-2xl font-black tracking-tight mb-2">
               Etherith
             </h1>
             <p className="text-xs font-medium tracking-wider uppercase opacity-80">
               Immutable by design
             </p>
-          </div>
+          </motion.div>
 
-          {/* Collapsed Logo */}
+          {/* Collapsed Logo - Enhanced */}
           {isCollapsed && (
-            <div className="w-full text-center">
+            <motion.div 
+              className="w-full text-center"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
               <h1 className="font-display text-xl font-black tracking-tight">
                 E
               </h1>
-            </div>
+            </motion.div>
           )}
 
-          {/* Toggle Button */}
+          {/* Toggle Button - Enhanced */}
           {!isCollapsed && (
             <motion.button
               onClick={onToggleCollapse}
-              className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-current/10 transition-colors duration-200"
-              whileHover={{ scale: 1.1 }}
+              className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-current/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-current focus:ring-opacity-50"
+              whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.9 }}
-              aria-label="Toggle sidebar"
+              aria-label="Collapse sidebar"
             >
               <svg
                 width="16"
@@ -212,51 +236,95 @@ function DesktopSidebar({
         </div>
       </motion.div>
 
-      {/* Navigation Menu */}
-      <div className="flex-1 py-content">
-        {navItems.map((item) => (
+      {/* Navigation Menu - Enhanced */}
+      <div className="flex-1 py-content space-y-1">
+        {navItems.map((item, index) => (
           <motion.button
             key={item.id}
             onClick={() => onViewChange(item.id)}
             title={isCollapsed ? item.label : undefined}
             className={`
-              w-full text-left ${isCollapsed ? 'px-2 py-3' : 'px-content-lg py-3'}
-              font-medium text-base tracking-tight transition-all duration-200
-              relative border-l-[3px] border-transparent
-              ${currentView === item.id
-                ? 'opacity-100 font-semibold border-current bg-current/5'
-                : 'opacity-70 hover:opacity-100 hover:bg-current/5'
-              }
+              nav-item w-full text-left ${isCollapsed ? 'px-2 py-3' : 'px-content-lg py-3'}
+              ${currentView === item.id ? 'nav-item-active' : ''}
+              group relative overflow-hidden
             `}
-            whileHover={{ x: currentView === item.id || isCollapsed ? 0 : 8 }}
+            whileHover={{ 
+              x: currentView === item.id || isCollapsed ? 0 : 8,
+              scale: 1.02
+            }}
             whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1, duration: 0.3 }}
           >
-            {isCollapsed ? (
-              <div className="text-center text-xs font-bold">
-                {item.label.charAt(0)}
-              </div>
-            ) : (
-              item.label
-            )}
+            {/* Hover background effect */}
+            <motion.div
+              className="absolute inset-0 bg-current/5 rounded-lg"
+              initial={{ scale: 0, opacity: 0 }}
+              whileHover={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            />
+            
+            {/* Content */}
+            <div className="relative z-10 flex items-center gap-3">
+              {isCollapsed ? (
+                <div className="text-center text-xs font-bold w-full">
+                  {item.label.charAt(0)}
+                </div>
+              ) : (
+                <>
+                  <span className="font-medium text-base tracking-wide">
+                    {item.label}
+                  </span>
+                  {/* Active indicator */}
+                  {currentView === item.id && (
+                    <motion.div
+                      className="w-2 h-2 bg-current rounded-full ml-auto"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                    />
+                  )}
+                </>
+              )}
+            </div>
           </motion.button>
         ))}
       </div>
 
-      {/* Wallet Connect Section */}
-      <div className={`
-        ${isCollapsed ? 'p-2' : 'p-content-lg'}
-        border-t border-current/20 transition-all duration-300 ease-out
-      `}>
-        {!isCollapsed && <WalletConnect />}
-      </div>
+      {/* Wallet Connect Section - Enhanced */}
+      <motion.div 
+        className={`
+          ${isCollapsed ? 'p-2' : 'p-content-lg'}
+          border-t border-current/20 transition-all duration-500 ease-luxury
+        `}
+        initial={false}
+        animate={{ opacity: isCollapsed ? 0.7 : 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        {!isCollapsed && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.3 }}
+          >
+            <WalletConnect variant="compact" />
+          </motion.div>
+        )}
+      </motion.div>
 
-      {/* Collapsed Expand Button */}
+      {/* Collapsed Expand Button - Enhanced */}
       {isCollapsed && (
-        <div className="p-2 border-t border-current/20">
+        <motion.div 
+          className="p-2 border-t border-current/20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.3 }}
+        >
           <motion.button
             onClick={onToggleCollapse}
-            className="w-full flex items-center justify-center h-10 rounded-lg hover:bg-current/10 transition-colors duration-200"
-            whileHover={{ scale: 1.05 }}
+            className="w-full flex items-center justify-center h-10 rounded-lg hover:bg-current/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-current focus:ring-opacity-50"
+            whileHover={{ scale: 1.05, rotate: -5 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Expand sidebar"
           >
@@ -269,14 +337,14 @@ function DesktopSidebar({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="rotate-180"
+              className="rotate-180 transition-transform duration-300"
             >
               <path d="m15 18-6-6 6-6"/>
             </svg>
           </motion.button>
-        </div>
+        </motion.div>
       )}
-    </nav>
+    </motion.nav>
   )
 }
 
@@ -289,7 +357,8 @@ export default function AdaptiveNavigation({
   isArchiveMode = false,
   connectionStatus = 'connected',
   onSearchPress,
-  onNotificationPress
+  onNotificationPress,
+  showWalletWidget = true
 }) {
   const {
     showBottomNav,
@@ -341,6 +410,7 @@ export default function AdaptiveNavigation({
             onSearchPress={onSearchPress}
             onNotificationPress={onNotificationPress}
             isArchiveMode={isArchiveMode}
+            showWalletWidget={showWalletWidget}
           />
           <BottomTabBar
             currentView={currentView}
@@ -361,6 +431,7 @@ export default function AdaptiveNavigation({
             onSearchPress={onSearchPress}
             onNotificationPress={onNotificationPress}
             isArchiveMode={isArchiveMode}
+            showWalletWidget={showWalletWidget}
           />
           <SideDrawer
             isOpen={isDrawerOpen}

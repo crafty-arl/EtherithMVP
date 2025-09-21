@@ -38,6 +38,12 @@ const navItems = [
     label: 'Protocol',
     icon: SettingsIcon,
     ariaLabel: 'Configure protocol settings'
+  },
+  {
+    id: 'showcase',
+    label: 'Demo',
+    icon: ShowcaseIcon,
+    ariaLabel: 'View UI showcase demo'
   }
 ]
 
@@ -145,6 +151,33 @@ function SettingsIcon({ isActive, className = "" }) {
   )
 }
 
+function ShowcaseIcon({ isActive, className = "" }) {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={isActive ? "2.5" : "2"}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+      <rect x="9" y="9" width="6" height="6"/>
+      <line x1="9" y1="1" x2="9" y2="3"/>
+      <line x1="15" y1="1" x2="15" y2="3"/>
+      <line x1="9" y1="21" x2="9" y2="23"/>
+      <line x1="15" y1="21" x2="15" y2="23"/>
+      <line x1="20" y1="9" x2="22" y2="9"/>
+      <line x1="20" y1="14" x2="22" y2="14"/>
+      <line x1="1" y1="9" x2="3" y2="9"/>
+      <line x1="1" y1="14" x2="3" y2="14"/>
+    </svg>
+  )
+}
+
 /**
  * TabButton - Individual tab button component
  */
@@ -197,10 +230,11 @@ function TabButton({
       onTap={handlePress}
       className={`
         ${navigationPatterns.bottomNav.item}
-        relative outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-opacity-50 rounded-lg
-        transition-colors duration-200
-        ${isActive ? 'text-current' : 'text-current/60'}
+        relative outline-none focus:outline-none focus-visible:ring-4 focus-visible:ring-current focus-visible:ring-opacity-50 rounded-lg
+        transition-all duration-200 motion-smooth min-h-touch min-w-touch
+        ${isActive ? 'text-current scale-105' : 'text-current/70 hover:text-current hover:scale-105'}
         ${isArchiveMode ? 'text-white' : 'text-black'}
+        hover:bg-current/10
       `}
       variants={shouldAnimate ? tabVariants : {}}
       initial="idle"
@@ -208,13 +242,13 @@ function TabButton({
       whileTap={isTouch ? "pressed" : undefined}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       aria-label={item.ariaLabel}
-      role="tab"
-      aria-selected={isActive}
+      aria-current={isActive ? 'page' : undefined}
+      id={`nav-tab-${item.id}`}
     >
       {/* Active indicator */}
       {isActive && (
         <motion.div
-          className="absolute -top-1 left-1/2 w-1 h-1 bg-current rounded-full"
+          className="absolute -top-1 left-1/2 w-2 h-2 bg-current rounded-full"
           initial={{ scale: 0, x: "-50%" }}
           animate={{ scale: 1, x: "-50%" }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}

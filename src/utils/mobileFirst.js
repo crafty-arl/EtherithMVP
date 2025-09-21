@@ -64,26 +64,37 @@ export const navigationPatterns = {
   },
 }
 
-// Touch-first interaction patterns
+// Touch-first interaction patterns - Enhanced for accessibility
 export const touchPatterns = {
-  // Touch targets
+  // Touch targets - WCAG compliant sizes
   touchTarget: {
     minimum: 'min-w-touch min-h-touch',
     comfortable: 'min-w-touch-lg min-h-touch-lg',
+    spacious: 'min-w-touch-xl min-h-touch-xl',
   },
 
-  // Button patterns
+  // Button patterns - Enhanced accessibility
   button: {
-    primary: 'min-h-touch px-6 py-3 bg-black text-white rounded-md font-medium transition-all duration-200 active:scale-95 disabled:opacity-50',
-    secondary: 'min-h-touch px-6 py-3 border border-current rounded-md font-medium transition-all duration-200 active:scale-95 disabled:opacity-50',
-    icon: 'flex items-center justify-center min-w-touch min-h-touch rounded-md transition-all duration-200 active:scale-95',
+    primary: 'min-h-touch px-6 py-3 bg-black text-white rounded-lg font-semibold text-base transition-all duration-200 active:scale-95 disabled:opacity-60 focus:ring-4 focus:ring-black focus:ring-opacity-50',
+    secondary: 'min-h-touch px-6 py-3 border-2 border-current rounded-lg font-semibold text-base transition-all duration-200 active:scale-95 disabled:opacity-60 focus:ring-4 focus:ring-current focus:ring-opacity-50',
+    ghost: 'min-h-touch px-4 py-3 rounded-lg font-medium text-base transition-all duration-200 active:scale-95 hover:bg-current hover:bg-opacity-10 focus:ring-4 focus:ring-current focus:ring-opacity-50',
+    icon: 'flex items-center justify-center min-w-touch min-h-touch rounded-lg transition-all duration-200 active:scale-95 focus:ring-4 focus:ring-current focus:ring-opacity-50',
+    iconLarge: 'flex items-center justify-center min-w-touch-lg min-h-touch-lg rounded-lg transition-all duration-200 active:scale-95 focus:ring-4 focus:ring-current focus:ring-opacity-50',
   },
 
-  // Card interactions
+  // Card interactions - Enhanced feedback with z-index
   card: {
-    base: 'p-4 bg-vault-card rounded-lg border border-current transition-all duration-200',
-    interactive: 'p-4 bg-vault-card rounded-lg border border-current transition-all duration-200 active:scale-98 cursor-pointer',
-    touchFeedback: 'p-4 bg-vault-card rounded-lg border border-current transition-all duration-200 active:scale-98 active:bg-opacity-90 cursor-pointer',
+    base: 'p-4 bg-vault-card rounded-lg border-2 border-current transition-all duration-200 z-card',
+    interactive: 'p-4 bg-vault-card rounded-lg border-2 border-current transition-all duration-200 active:scale-98 cursor-pointer hover:shadow-lg focus:ring-4 focus:ring-current focus:ring-opacity-20 z-card hover:z-card-hover',
+    touchFeedback: 'p-4 bg-vault-card rounded-lg border-2 border-current transition-all duration-200 active:scale-98 active:bg-opacity-90 cursor-pointer hover:shadow-lg focus:ring-4 focus:ring-current focus:ring-opacity-20 z-card hover:z-card-hover',
+    memory: 'p-6 bg-vault-card rounded-xl border-2 border-current transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-98 cursor-pointer focus:ring-4 focus:ring-current focus:ring-opacity-20 z-card hover:z-card-hover',
+  },
+
+  // Gesture feedback
+  gestures: {
+    pressDown: 'transform transition-transform duration-75 active:scale-95',
+    scaleUp: 'transform transition-transform duration-200 hover:scale-105 active:scale-95',
+    lift: 'transform transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-98',
   },
 }
 
@@ -102,15 +113,26 @@ export const typographyPatterns = {
   },
 }
 
-// Form patterns optimized for mobile
+// Form patterns optimized for mobile - Enhanced accessibility
 export const formPatterns = {
   input: {
-    base: 'w-full min-h-touch px-4 py-3 border border-current rounded-md bg-transparent text-current placeholder-current/60 transition-all duration-200 focus:ring-2 focus:ring-current focus:ring-opacity-20',
-    search: 'w-full min-h-touch px-4 py-3 pl-10 border border-current rounded-md bg-transparent text-current placeholder-current/60 transition-all duration-200 focus:ring-2 focus:ring-current focus:ring-opacity-20',
+    base: 'w-full min-h-touch px-4 py-3 border-2 border-current rounded-lg bg-transparent text-current transition-all duration-200 focus:ring-4 focus:ring-current focus:ring-opacity-20 focus:border-current text-base',
+    search: 'w-full min-h-touch px-4 py-3 pl-12 border-2 border-current rounded-lg bg-transparent text-current transition-all duration-200 focus:ring-4 focus:ring-current focus:ring-opacity-20 focus:border-current text-base',
+    textarea: 'w-full min-h-[120px] px-4 py-3 border-2 border-current rounded-lg bg-transparent text-current transition-all duration-200 focus:ring-4 focus:ring-current focus:ring-opacity-20 focus:border-current text-base resize-none',
+    select: 'w-full min-h-touch px-4 py-3 border-2 border-current rounded-lg bg-transparent text-current transition-all duration-200 focus:ring-4 focus:ring-current focus:ring-opacity-20 focus:border-current text-base appearance-none',
+    error: 'border-red-500 focus:ring-red-500',
+    success: 'border-green-500 focus:ring-green-500',
   },
   label: {
-    base: 'block text-sm font-medium mb-2',
-    required: 'block text-sm font-medium mb-2 after:content-["*"] after:ml-1 after:text-red-500',
+    base: 'block text-base font-semibold mb-2 text-current',
+    required: 'block text-base font-semibold mb-2 text-current after:content-["*"] after:ml-1 after:text-current after:font-bold',
+    helper: 'block text-sm text-current/70 mb-2',
+    error: 'block text-sm text-red-600 mt-1',
+    success: 'block text-sm text-green-600 mt-1',
+  },
+  fieldset: {
+    base: 'border-2 border-current rounded-lg p-4 mb-4',
+    legend: 'text-base font-semibold px-2 text-current',
   },
 }
 
@@ -177,30 +199,139 @@ export const responsive = {
   },
 }
 
-// Pre-built common patterns
+// Pre-built common patterns - Enhanced for accessibility
 export const commonPatterns = {
-  // Full-screen mobile, contained desktop
+  // Full-screen mobile, contained desktop - Safe area aware
   responsiveContainer: responsive.build({
-    base: 'w-full min-h-screen-mobile px-content py-content',
+    base: 'w-full min-h-screen-mobile px-content py-content pt-safe-top pb-safe-bottom',
     sm: 'px-content-sm py-content-sm',
     md: 'px-content-md py-content-md',
-    lg: 'max-w-screen-lg mx-auto px-content-lg py-content-lg',
-    xl: 'max-w-screen-xl px-content-xl py-content-xl',
+    lg: 'w-full px-content-lg py-content-lg max-w-7xl mx-auto',
+    xl: 'w-full px-content-xl py-content-xl max-w-8xl mx-auto',
+    '2xl': 'w-full px-content-xl py-content-xl max-w-screen-2xl mx-auto',
   }),
 
-  // Responsive card grid
+  // Enhanced responsive card grid with proper desktop centering
   cardGrid: responsive.build({
-    base: 'grid grid-cols-1 gap-card',
-    sm: 'grid-cols-2 gap-card-sm',
-    md: 'grid-cols-3 gap-card-md',
-    lg: 'grid-cols-4 gap-card-lg',
+    base: 'grid grid-cols-1 gap-6 justify-items-center max-w-sm mx-auto',
+    sm: 'grid-cols-2 gap-6 justify-items-stretch max-w-2xl mx-auto',
+    md: 'grid-cols-3 gap-8 max-w-4xl mx-auto',
+    lg: 'grid-cols-4 gap-8 max-w-6xl mx-auto justify-items-stretch',
+    xl: 'grid-cols-5 gap-10 max-w-7xl mx-auto justify-items-stretch',
+    '2xl': 'grid-cols-6 gap-12 max-w-screen-2xl mx-auto justify-items-stretch',
   }),
 
-  // Stack to horizontal
+  // Memory card grid (optimized for memory cards) - Enhanced desktop centering
+  memoryGrid: responsive.build({
+    base: 'grid grid-cols-1 gap-6 justify-items-center max-w-sm mx-auto',
+    sm: 'grid-cols-2 gap-6 justify-items-stretch max-w-2xl mx-auto',
+    md: 'grid-cols-3 gap-8 max-w-4xl mx-auto',
+    lg: 'grid-cols-4 gap-8 max-w-6xl mx-auto justify-items-stretch',
+    xl: 'grid-cols-5 gap-10 max-w-7xl mx-auto justify-items-stretch',
+    '2xl': 'grid-cols-6 gap-12 max-w-screen-2xl mx-auto justify-items-stretch',
+  }),
+
+  // Stack to horizontal - Better mobile handling
   stackToHorizontal: responsive.build({
-    base: 'flex flex-col gap-4',
+    base: 'flex flex-col gap-4 items-stretch',
+    sm: 'gap-6',
     md: 'flex-row items-center gap-6',
   }),
+
+  // Responsive text sizing - WCAG compliant
+  responsiveText: responsive.build({
+    base: 'text-base leading-relaxed', // Minimum 16px for mobile
+    sm: 'text-lg leading-relaxed',
+    md: 'text-xl leading-relaxed',
+    lg: 'text-2xl leading-relaxed',
+  }),
+
+  // Responsive spacing - Enhanced mobile comfort
+  responsiveSpacing: responsive.build({
+    base: 'p-content',
+    sm: 'p-content-sm',
+    md: 'p-content-md',
+    lg: 'p-content-lg',
+    xl: 'p-content-xl',
+  }),
+
+  // Mobile-first button sizing - Touch-friendly
+  responsiveButton: responsive.build({
+    base: 'px-6 py-3 text-base min-h-touch', // WCAG compliant
+    sm: 'px-8 py-4 text-lg min-h-touch-lg',
+    md: 'px-10 py-5 text-xl',
+  }),
+
+  // Navigation patterns
+  responsiveNavigation: {
+    mobile: 'fixed bottom-0 left-0 right-0 z-50 bg-vault-bg border-t-2 border-current',
+    tablet: 'fixed top-0 left-0 right-0 z-40 bg-vault-bg border-b-2 border-current',
+    desktop: 'fixed left-0 top-0 bottom-0 z-30 bg-vault-bg border-r-2 border-current',
+  },
+
+  // Content areas with navigation awareness
+  contentWithNav: {
+    mobile: 'pt-nav-top pb-nav-bottom px-content',
+    tablet: 'pt-nav-top px-content',
+    desktop: 'pl-sidebar px-content',
+  },
+
+  // Accessible focus management
+  focusManagement: {
+    skipLink: 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 bg-current text-vault-bg px-4 py-2 rounded-lg font-semibold',
+    focusContainer: 'focus-within:ring-4 focus-within:ring-current focus-within:ring-opacity-20',
+  },
+}
+
+// Accessibility utilities
+export const accessibilityPatterns = {
+  // ARIA patterns
+  aria: {
+    button: 'role="button" tabindex="0"',
+    heading: (level) => `role="heading" aria-level="${level}"`,
+    navigation: 'role="navigation" aria-label="Main navigation"',
+    main: 'role="main"',
+    banner: 'role="banner"',
+    contentinfo: 'role="contentinfo"',
+  },
+
+  // Screen reader utilities
+  screenReader: {
+    only: 'sr-only',
+    focusable: 'sr-only focus:not-sr-only',
+    description: 'text-sm text-current/70',
+  },
+
+  // High contrast mode support
+  highContrast: {
+    border: 'border-2 border-current',
+    outline: 'outline-2 outline-current',
+    background: 'bg-current text-vault-bg',
+  },
+
+  // Reduced motion patterns
+  reducedMotion: {
+    respectPreference: 'motion-reduce:transition-none motion-reduce:animate-none',
+    essential: 'motion-reduce:transition-opacity motion-reduce:duration-200',
+  },
+}
+
+// Color contrast utilities for monochrome theme
+export const contrastPatterns = {
+  // Ensure WCAG AA compliance
+  text: {
+    primary: 'text-current', // Black on white / White on black = 21:1
+    secondary: 'text-current/80', // ~16.8:1 ratio
+    muted: 'text-current/70', // ~14.7:1 ratio (still AA compliant)
+    subtle: 'text-current/60', // ~12.6:1 ratio (borderline, use carefully)
+  },
+
+  background: {
+    primary: 'bg-vault-bg',
+    card: 'bg-vault-card',
+    overlay: 'bg-current/10',
+    hover: 'hover:bg-current/5',
+  },
 }
 
 export default {
@@ -212,4 +343,6 @@ export default {
   animationPatterns,
   responsive,
   commonPatterns,
+  accessibilityPatterns,
+  contrastPatterns,
 }

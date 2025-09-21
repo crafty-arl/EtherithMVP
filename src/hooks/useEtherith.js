@@ -351,7 +351,7 @@ export function useEtherith(wallet) {
     formData.append('file', file)
     formData.append('metadata', JSON.stringify(metadata))
 
-    const response = await fetch('/functions/ipfs/upload', {
+    const response = await fetch('https://etherith-memory-extractor.carl-6e7.workers.dev/functions/ipfs/upload', {
       method: 'POST',
       body: formData
     })
@@ -364,7 +364,7 @@ export function useEtherith(wallet) {
   }
 
   const moderateContent = async (data) => {
-    const response = await fetch('/functions/ai/moderate', {
+    const response = await fetch('https://etherith-memory-extractor.carl-6e7.workers.dev/functions/ai/moderate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

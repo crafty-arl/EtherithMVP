@@ -45,7 +45,12 @@
       "WebFetch(domain:etherith-production.pages.dev)",
       "Bash(git push:*)",
       "Bash(tasklist)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "WebFetch(domain:d3bed7b8.etherith-production.pages.dev)",
+      "Bash(wrangler pages project:*)",
+      "Bash(npm run deploy-main:*)",
+      "Bash(dir \"C:\\Users\\aaron\\Documents\\GitHub\\EtherithMVP\\src\\components\")",
+      "WebFetch(domain:003eec02.etherith-mvp.pages.dev)"
     ],
     "deny": [],
     "ask": []

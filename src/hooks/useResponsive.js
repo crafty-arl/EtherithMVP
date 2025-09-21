@@ -175,6 +175,11 @@ export function useResponsive() {
 
     // Animation helpers
     shouldAnimate: !prefersReducedMotion,
+    
+    // Desktop-specific helpers
+    isDesktopMode: screenSize.isDesktop || screenSize.isDesktopLarge,
+    desktopOptimized: screenSize.isDesktop || screenSize.isDesktopLarge,
+    enhancedInteractions: hasHover && !isTouch,
   }
 }
 

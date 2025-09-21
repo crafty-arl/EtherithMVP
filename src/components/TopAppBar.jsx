@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useResponsiveContext } from '../context/ResponsiveContext'
 import { navigationPatterns, touchPatterns } from '../utils/mobileFirst'
+import WalletConnectionWidget from './WalletConnectionWidget'
 
 /**
  * TopAppBar - Mobile-first top navigation component
- * Provides native mobile app-like header with title and actions
+ * Provides native mobile app-like header with title, actions, and prominent wallet connection
  */
 
 // Action Button Component
@@ -84,11 +85,6 @@ function ConnectionStatus({ status, className = "" }) {
 // Menu Button (Hamburger)
 function MenuButton({ onPress, isOpen = false }) {
   const { shouldAnimate } = useResponsiveContext()
-
-  const lineVariants = {
-    closed: { rotate: 0, y: 0 },
-    open: { rotate: 0, y: 0 },
-  }
 
   const topLineVariants = {
     closed: { rotate: 0, y: 0 },
@@ -208,6 +204,7 @@ export default function TopAppBar({
   onBackPress,
   actions = [],
   isArchiveMode = false,
+  showWalletWidget = true,
   className = "",
   children
 }) {
@@ -253,7 +250,7 @@ export default function TopAppBar({
       className={`
         ${navigationPatterns.topBar.container}
         ${isArchiveMode ? 'bg-archive-bg border-white text-white' : 'bg-vault-bg border-black text-black'}
-        backdrop-blur-lg bg-opacity-95
+        backdrop-blur-lg bg-opacity-95 glass
         ${className}
       `}
       variants={shouldAnimate ? containerVariants : {}}
@@ -263,7 +260,7 @@ export default function TopAppBar({
     >
       {/* Safe area padding for devices with notches */}
       <div className="pt-safe-area">
-        <div className={navigationPatterns.topBar.container.replace('lg:hidden', '')}>
+        <div className="flex items-center justify-between h-top-bar px-content">
           {/* Left Section */}
           <div className="flex items-center gap-3 flex-1 min-w-0">
             {showBackButton ? (
@@ -298,8 +295,13 @@ export default function TopAppBar({
 
           {/* Right Section */}
           <div className={`${navigationPatterns.topBar.actions} ${isArchiveMode ? 'text-white' : 'text-black'}`}>
-            {/* Connection Status */}
-            <ConnectionStatus status={connectionStatus} />
+            {/* Prominent Wallet Connection Widget */}
+            {showWalletWidget && (
+              <WalletConnectionWidget compact className="mr-2" />
+            )}
+
+            {/* Connection Status (for P2P network) */}
+            <ConnectionStatus status={connectionStatus} className="hidden sm:flex" />
 
             {/* Action Buttons */}
             <SearchButton onPress={onSearchPress} />
