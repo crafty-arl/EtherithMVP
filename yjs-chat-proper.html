@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yjs Chat Proper - Advanced Collaborative Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .chat-app {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chat-header h1 {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .chat-header .subtitle {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .status-indicators {
+            background: #f8f9fa;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.85em;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .users-bar {
+            background: #f1f3f4;
+            padding: 12px 25px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .users-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9em;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75em;
+            font-weight: 600;
+            border: 2px solid white;
+            margin-left: -5px;
+        }
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            background: #fafbfc;
+            position: relative;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            max-width: 85%;
+            position: relative;
+        }
+
+        .message.own {
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message-bubble {
+            background: white;
+            padding: 15px 18px;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .message.own .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .message-author {
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #6c757d;
+        }
+
+        .message.own .message-author {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .message-text {
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        .message-time {
+            font-size: 0.7em;
+            opacity: 0.6;
+            margin-top: 6px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85em;
+            color: #6c757d;
+            font-style: italic;
+            margin: 15px 0;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #6c757d;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .input-area {
+            background: white;
+            padding: 20px 25px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .username-input {
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 0.9em;
+            width: 150px;
+            transition: all 0.3s ease;
+        }
+
+        .username-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 0.95em;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .send-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .debug-panel {
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            padding: 15px 25px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.75em;
+            color: #495057;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .debug-panel pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .chat-app {
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .input-row {
+                flex-direction: column;
+            }
+
+            .username-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-app">
+        <div class="chat-header">
+            <h1>🚀 Yjs Chat Proper</h1>
+            <div class="subtitle">Advanced real-time collaborative chat with Yjs</div>
+        </div>
+
+        <div class="status-indicators">
+            <div class="status-item">
+                <div class="status-dot" id="connectionDot"></div>
+                <span id="connectionStatus">Connecting...</span>
+            </div>
+            <div class="status-item">
+                <span id="syncStatus">Initializing sync...</span>
+            </div>
+            <div class="status-item">
+                <span id="messageCount">0 messages</span>
+            </div>
+        </div>
+
+        <div class="users-bar">
+            <span class="users-label">Active users:</span>
+            <div id="userAvatars"></div>
+        </div>
+
+        <div class="messages-area" id="messagesArea">
+            <div class="message">
+                <div class="message-bubble">
+                    <div class="message-author">System</div>
+                    <div class="message-text">Welcome to Yjs Chat Proper! 🎉 This is an advanced collaborative chat using Yjs for real-time synchronization.</div>
+                    <div class="message-time">Just now</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-row">
+                <input type="text" id="usernameInput" class="username-input" placeholder="Your name" maxlength="20">
+                <input type="text" id="messageInput" class="message-input" placeholder="Type your message..." maxlength="1000">
+                <button id="sendButton" class="send-button">Send</button>
+            </div>
+        </div>
+
+        <div class="debug-panel">
+            <strong>Debug Information:</strong>
+            <pre id="debugInfo">Initializing Yjs document...</pre>
+        </div>
+    </div>
+
+    <!-- Load Yjs with multiple fallbacks -->
+    <script>
+        console.log('🚀 Loading Yjs Chat Proper...');
+
+        // Configuration
+        const CHAT_CONFIG = {
+            yjsVersion: '13.6.10',
+            storageKey: 'yjs-chat-proper-v2',
+            maxMessages: 1000,
+            userTimeout: 60000, // 1 minute
+            typingTimeout: 3000, // 3 seconds
+            sources: [
+                'https://unpkg.com/yjs@13.6.10/dist/yjs.min.js',
+                'https://cdn.jsdelivr.net/npm/yjs@13.6.10/dist/yjs.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/yjs/13.6.10/yjs.min.js'
+            ]
+        };
+
+        // Global variables
+        let ydoc, messagesArray, usersMap, typingMap;
+        let currentUser = '';
+        let userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        let isInitialized = false;
+        let typingTimer = null;
+
+        // DOM elements cache
+        const elements = {
+            connectionStatus: document.getElementById('connectionStatus'),
+            connectionDot: document.getElementById('connectionDot'),
+            syncStatus: document.getElementById('syncStatus'),
+            messageCount: document.getElementById('messageCount'),
+            userAvatars: document.getElementById('userAvatars'),
+            messagesArea: document.getElementById('messagesArea'),
+            usernameInput: document.getElementById('usernameInput'),
+            messageInput: document.getElementById('messageInput'),
+            sendButton: document.getElementById('sendButton'),
+            debugInfo: document.getElementById('debugInfo')
+        };
+
+        // Yjs loader with fallback
+        function loadYjs() {
+            let currentSource = 0;
+
+            function tryLoad() {
+                if (currentSource >= CHAT_CONFIG.sources.length) {
+                    console.error('❌ Failed to load Yjs from all sources');
+                    updateStatus('❌ Failed to load Yjs library', 'error');
+                    return;
+                }
+
+                const script = document.createElement('script');
+                script.src = CHAT_CONFIG.sources[currentSource];
+                script.onload = () => {
+                    console.log('✅ Yjs loaded from:', CHAT_CONFIG.sources[currentSource]);
+                    updateStatus('✅ Yjs library loaded', 'success');
+                    initializeChat();
+                };
+                script.onerror = () => {
+                    console.warn('⚠️ Failed to load from:', CHAT_CONFIG.sources[currentSource]);
+                    currentSource++;
+                    tryLoad();
+                };
+                document.head.appendChild(script);
+            }
+
+            tryLoad();
+        }
+
+        // Initialize chat system
+        function initializeChat() {
+            if (typeof Y === 'undefined') {
+                updateStatus('❌ Yjs not available', 'error');
+                return;
+            }
+
+            try {
+                updateStatus('🔧 Initializing Yjs document...', 'loading');
+
+                // Create Yjs document and shared types
+                ydoc = new Y.Doc();
+                messagesArray = ydoc.getArray('messages');
+                usersMap = ydoc.getMap('users');
+                typingMap = ydoc.getMap('typing');
+
+                console.log('📦 Yjs document and shared types created');
+
+                // Setup event listeners
+                setupEventListeners();
+
+                // Setup synchronization
+                setupSynchronization();
+
+                // Initialize UI
+                initializeUI();
+
+                // Mark as initialized
+                isInitialized = true;
+                updateStatus('✅ Chat ready!', 'success');
+                elements.syncStatus.textContent = '🔄 Real-time sync active';
+
+                console.log('✅ Chat initialization complete');
+
+            } catch (error) {
+                console.error('❌ Chat initialization failed:', error);
+                updateStatus('❌ Initialization failed: ' + error.message, 'error');
+            }
+        }
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            // Send message events
+            elements.sendButton.addEventListener('click', sendMessage);
+            elements.messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Username change handling
+            elements.usernameInput.addEventListener('input', handleUsernameChange);
+            elements.usernameInput.addEventListener('blur', handleUsernameChange);
+
+            // Typing indicator
+            elements.messageInput.addEventListener('input', handleTyping);
+
+            // Yjs observers
+            messagesArray.observe(handleMessagesChange);
+            usersMap.observe(handleUsersChange);
+            typingMap.observe(handleTypingChange);
+
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', cleanup);
+
+            // Periodic cleanup
+            setInterval(cleanupInactiveUsers, 30000); // Every 30 seconds
+        }
+
+        // Setup synchronization with persistence
+        function setupSynchronization() {
+            const storageKey = CHAT_CONFIG.storageKey;
+
+            // Load existing state from localStorage
+            try {
+                const savedState = localStorage.getItem(storageKey);
+                if (savedState) {
+                    const update = new Uint8Array(JSON.parse(savedState));
+                    Y.applyUpdate(ydoc, update);
+                    console.log('📥 Loaded saved chat state from localStorage');
+                }
+            } catch (error) {
+                console.warn('⚠️ Could not load saved state:', error);
+            }
+
+            // Save state on document updates
+            ydoc.on('update', (update) => {
+                try {
+                    const updateArray = Array.from(update);
+                    localStorage.setItem(storageKey, JSON.stringify(updateArray));
+
+                    // Broadcast to other tabs/windows
+                    window.dispatchEvent(new CustomEvent('yjs-chat-update', {
+                        detail: { update: updateArray }
+                    }));
+
+                    updateDebugInfo();
+                } catch (error) {
+                    console.warn('⚠️ Could not save state:', error);
+                }
+            });
+
+            // Listen for updates from other tabs
+            window.addEventListener('yjs-chat-update', (event) => {
+                try {
+                    const update = new Uint8Array(event.detail.update);
+                    Y.applyUpdate(ydoc, update);
+                } catch (error) {
+                    console.warn('⚠️ Could not apply cross-tab update:', error);
+                }
+            });
+
+            // Listen for storage changes (cross-tab synchronization)
+            window.addEventListener('storage', (event) => {
+                if (event.key === storageKey && event.newValue) {
+                    try {
+                        const update = new Uint8Array(JSON.parse(event.newValue));
+                        Y.applyUpdate(ydoc, update);
+                    } catch (error) {
+                        console.warn('⚠️ Could not apply storage update:', error);
+                    }
+                }
+            });
+        }
+
+        // Initialize UI state
+        function initializeUI() {
+            // Set default username from localStorage
+            const savedUsername = localStorage.getItem('yjs-chat-username') || '';
+            elements.usernameInput.value = savedUsername;
+            currentUser = savedUsername;
+
+            // Update user presence
+            updateUserPresence();
+
+            // Render existing content
+            renderMessages();
+            renderUsers();
+            updateMessageCount();
+        }
+
+        // Handle username changes
+        function handleUsernameChange() {
+            const newUsername = elements.usernameInput.value.trim() || 'Anonymous';
+            if (newUsername !== currentUser) {
+                currentUser = newUsername;
+                localStorage.setItem('yjs-chat-username', currentUser);
+                updateUserPresence();
+            }
+        }
+
+        // Handle typing indicator
+        function handleTyping() {
+            if (!currentUser) return;
+
+            // Clear existing timer
+            if (typingTimer) {
+                clearTimeout(typingTimer);
+            }
+
+            // Show typing indicator
+            typingMap.set(userId, {
+                username: currentUser,
+                timestamp: Date.now()
+            });
+
+            // Remove typing indicator after timeout
+            typingTimer = setTimeout(() => {
+                typingMap.delete(userId);
+            }, CHAT_CONFIG.typingTimeout);
+        }
+
+        // Send a message
+        function sendMessage() {
+            const messageText = elements.messageInput.value.trim();
+            const username = elements.usernameInput.value.trim() || 'Anonymous';
+
+            if (!messageText || !isInitialized) return;
+
+            const message = {
+                id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                text: messageText,
+                username: username,
+                userId: userId,
+                timestamp: Date.now()
+            };
+
+            // Add message to shared array
+            messagesArray.push([message]);
+
+            // Clear input and remove typing indicator
+            elements.messageInput.value = '';
+            typingMap.delete(userId);
+
+            // Update current user
+            currentUser = username;
+            localStorage.setItem('yjs-chat-username', currentUser);
+            updateUserPresence();
+
+            console.log('📤 Message sent:', message);
+        }
+
+        // Update user presence
+        function updateUserPresence() {
+            if (!currentUser || !isInitialized) return;
+
+            usersMap.set(userId, {
+                username: currentUser,
+                lastSeen: Date.now(),
+                color: generateUserColor(currentUser)
+            });
+        }
+
+        // Generate consistent color for user
+        function generateUserColor(username) {
+            let hash = 0;
+            for (let i = 0; i < username.length; i++) {
+                hash = username.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const hue = Math.abs(hash) % 360;
+            return `hsl(${hue}, 65%, 55%)`;
+        }
+
+        // Handle messages array changes
+        function handleMessagesChange() {
+            renderMessages();
+            updateMessageCount();
+        }
+
+        // Handle users map changes
+        function handleUsersChange() {
+            renderUsers();
+        }
+
+        // Handle typing map changes
+        function handleTypingChange() {
+            renderTypingIndicators();
+        }
+
+        // Render all messages
+        function renderMessages() {
+            const messages = messagesArray.toArray();
+            const container = elements.messagesArea;
+
+            // Keep system message and clear others
+            const systemMessage = container.querySelector('.message');
+            const userMessages = container.querySelectorAll('.message:not(:first-child)');
+            userMessages.forEach(msg => msg.remove());
+
+            // Render user messages
+            messages.forEach(message => {
+                const messageEl = createMessageElement(message);
+                container.appendChild(messageEl);
+            });
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Create message element
+        function createMessageElement(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.userId === userId ? 'own' : ''}`;
+
+            const timeStr = new Date(message.timestamp).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-author">${escapeHtml(message.username)}</div>
+                    <div class="message-text">${escapeHtml(message.text)}</div>
+                    <div class="message-time">${timeStr}</div>
+                </div>
+            `;
+
+            return messageDiv;
+        }
+
+        // Render active users
+        function renderUsers() {
+            const users = Array.from(usersMap.values());
+            const now = Date.now();
+            const activeUsers = users.filter(user =>
+                (now - user.lastSeen) < CHAT_CONFIG.userTimeout
+            );
+
+            elements.userAvatars.innerHTML = activeUsers
+                .map(user => {
+                    const initials = user.username.slice(0, 2).toUpperCase();
+                    return `<div class="user-avatar" style="background: ${user.color}" title="${escapeHtml(user.username)}">${initials}</div>`;
+                })
+                .join('');
+        }
+
+        // Render typing indicators
+        function renderTypingIndicators() {
+            const typingUsers = Array.from(typingMap.values());
+            const now = Date.now();
+            const activeTyping = typingUsers.filter(user =>
+                user.userId !== userId && (now - user.timestamp) < CHAT_CONFIG.typingTimeout
+            );
+
+            // Remove existing typing indicators
+            elements.messagesArea.querySelectorAll('.typing-indicator').forEach(el => el.remove());
+
+            // Add new typing indicators
+            activeTyping.forEach(user => {
+                const typingEl = document.createElement('div');
+                typingEl.className = 'typing-indicator';
+                typingEl.innerHTML = `
+                    <span>${escapeHtml(user.username)} is typing</span>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                `;
+                elements.messagesArea.appendChild(typingEl);
+            });
+
+            // Scroll to bottom if typing indicators added
+            if (activeTyping.length > 0) {
+                elements.messagesArea.scrollTop = elements.messagesArea.scrollHeight;
+            }
+        }
+
+        // Update message count
+        function updateMessageCount() {
+            const count = messagesArray.length;
+            elements.messageCount.textContent = `${count} message${count !== 1 ? 's' : ''}`;
+        }
+
+        // Update status with visual feedback
+        function updateStatus(message, type = 'info') {
+            elements.connectionStatus.textContent = message;
+
+            const dot = elements.connectionDot;
+            dot.className = 'status-dot';
+
+            switch (type) {
+                case 'success':
+                    dot.style.background = '#28a745';
+                    break;
+                case 'error':
+                    dot.style.background = '#dc3545';
+                    break;
+                case 'loading':
+                    dot.style.background = '#ffc107';
+                    break;
+                default:
+                    dot.style.background = '#6c757d';
+            }
+        }
+
+        // Update debug information
+        function updateDebugInfo() {
+            if (!isInitialized) return;
+
+            const info = {
+                timestamp: new Date().toISOString(),
+                userId: userId,
+                currentUser: currentUser,
+                messages: messagesArray.length,
+                users: usersMap.size,
+                typing: typingMap.size,
+                documentSize: Y.encodeStateAsUpdate(ydoc).length + ' bytes'
+            };
+
+            elements.debugInfo.textContent = JSON.stringify(info, null, 2);
+        }
+
+        // Cleanup inactive users
+        function cleanupInactiveUsers() {
+            if (!isInitialized) return;
+
+            const now = Date.now();
+            const userIds = Array.from(usersMap.keys());
+
+            userIds.forEach(id => {
+                const user = usersMap.get(id);
+                if (user && (now - user.lastSeen) > CHAT_CONFIG.userTimeout) {
+                    usersMap.delete(id);
+                }
+            });
+
+            // Cleanup typing indicators
+            const typingIds = Array.from(typingMap.keys());
+            typingIds.forEach(id => {
+                const typing = typingMap.get(id);
+                if (typing && (now - typing.timestamp) > CHAT_CONFIG.typingTimeout) {
+                    typingMap.delete(id);
+                }
+            });
+        }
+
+        // Cleanup on page unload
+        function cleanup() {
+            if (isInitialized) {
+                usersMap.delete(userId);
+                typingMap.delete(userId);
+            }
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🎯 Starting Yjs Chat Proper initialization...');
+            loadYjs();
+
+            // Show instructions in console
+            setTimeout(() => {
+                console.log('📚 YJS CHAT PROPER GUIDE:');
+                console.log('1. Enter your name in the username field');
+                console.log('2. Type a message and press Enter or click Send');
+                console.log('3. Open multiple tabs to test real-time collaboration');
+                console.log('4. Users show as typing when they type');
+                console.log('5. All data syncs automatically across tabs and sessions');
+                console.log('6. View debug panel for technical details');
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

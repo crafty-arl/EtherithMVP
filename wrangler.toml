@@ -1,0 +1,14 @@
+name = "etherith-mvp"
+pages_build_output_dir = "."
+
+[env.production]
+compatibility_date = "2024-01-01"
+
+[[env.production.build.upload]]
+format = "modules"
+dir = "."
+
+[build]
+command = "echo 'No build step required'"
+cwd = "."
+watch_dir = "."
